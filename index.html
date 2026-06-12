@@ -37,7 +37,6 @@
       --tint: #0a84ff;
       --text: #fff;
       --text-2: #98989d;
-      --gray: #8e8e93;
     }
   }
   * { box-sizing: border-box; }
@@ -50,6 +49,7 @@
   input, select, textarea { font: inherit; color: inherit; }
   #app { min-height: 100%; display: flex; flex-direction: column; }
 
+  /* Nav */
   .nav {
     position: sticky; top: 0; z-index: 10;
     padding: calc(var(--safe-top) + 6px) 12px 6px;
@@ -71,11 +71,9 @@
     border-top: 1px solid var(--bg-soft);
     display: flex; align-items: center; justify-content: center;
   }
-  .bottombar button {
-    color: var(--tint); font-weight: 500; padding: 8px 14px;
-    display: flex; align-items: center; gap: 6px;
-  }
+  .bottombar button { color: var(--tint); font-weight: 500; padding: 8px 14px; }
 
+  /* Sign in */
   .signin {
     flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: 18px; padding: 24px; text-align: center;
@@ -103,30 +101,83 @@
     cursor: pointer; transition: transform 0.08s;
   }
   .tile:active { transform: scale(0.98); }
-  .tile.disabled { opacity: 0.45; cursor: default; }
   .tile-icon { font-size: 44px; line-height: 1; }
   .tile-name { font-weight: 600; font-size: 17px; }
   .tile.shopping { background: color-mix(in srgb, var(--blue) 14%, transparent); color: var(--blue); }
   .tile.expenses { background: color-mix(in srgb, var(--green) 14%, transparent); color: var(--green); }
   .tile.books    { background: color-mix(in srgb, var(--orange) 14%, transparent); color: var(--orange); }
   .tile.travel   { background: color-mix(in srgb, var(--purple) 14%, transparent); color: var(--purple); }
-  .account-card { margin: 0 16px 16px; padding: 0; background: var(--bg-elev); border-radius: var(--radius); }
-  .acc-row { padding: 14px 16px; display: flex; align-items: center; gap: 8px; }
-  .danger { color: var(--red); font-weight: 500; }
+
+  /* Lists / sections */
+  .group-list { padding: 12px; display: flex; flex-direction: column; gap: 16px; }
+  .section-card { background: var(--bg-elev); border-radius: var(--radius); overflow: hidden; }
+  .section-title { padding: 4px 16px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-2); display: flex; align-items: center; gap: 6px; }
+  .row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; min-height: 44px;
+    border-top: 1px solid var(--bg-soft);
+  }
+  .row:first-child { border-top: 0; }
+  .row .grow { flex: 1; min-width: 0; }
+  .row.tap { cursor: pointer; }
+  .row.tap:active { background: var(--bg-soft); }
+  .row .chev { color: var(--gray); font-size: 18px; }
+  .muted { color: var(--text-2); font-size: 13px; }
+  .empty {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; color: var(--text-2); padding: 60px 24px; text-align: center;
+  }
+  .empty .e-icon { font-size: 48px; opacity: 0.5; }
+
+  /* Shopping */
+  .shop-emoji {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--bg-tert); display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex: 0 0 36px;
+  }
+  .item-row .check { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--gray); display: flex; align-items: center; justify-content: center; flex: 0 0 28px; font-size: 14px; color: transparent; }
+  .item-row .check.on { background: var(--green); border-color: var(--green); color: #fff; }
+  .item-row .thumb { width: 36px; height: 36px; border-radius: 6px; background: var(--bg-tert); flex: 0 0 36px; background-size: cover; background-position: center; cursor: zoom-in; }
+  .item-row .name { flex: 1; min-width: 0; cursor: pointer; }
+  .item-row.checked .name { text-decoration: line-through; color: var(--text-2); }
+  .item-row .qty { background: var(--bg-tert); color: var(--text-2); border-radius: 999px; padding: 3px 8px; font-size: 12px; font-weight: 500; }
+  .addbar {
+    position: sticky; bottom: 0;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: saturate(180%) blur(20px);
+    padding: 8px 12px;
+    display: flex; gap: 8px; align-items: center;
+    border-top: 1px solid var(--bg-soft);
+  }
+  .addbar input.name { flex: 1; min-width: 0; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--bg-tert); background: var(--bg-elev); }
+  .addbar select { padding: 8px 8px; border-radius: 999px; background: var(--bg-tert); border: 0; max-width: 130px; }
+  .addbar .plus { width: 36px; height: 36px; border-radius: 50%; color: var(--tint); font-size: 28px; }
+  .addbar .plus[disabled] { color: var(--gray); }
+  .suggestions { overflow-x: auto; display: flex; gap: 8px; padding: 8px 12px; border-top: 1px solid var(--bg-soft); background: var(--bg-elev); }
+  .sugg-chip { flex: 0 0 auto; padding: 6px 12px; border-radius: 999px; background: var(--bg-soft); display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; }
+  .sugg-chip .thumb { width: 22px; height: 22px; border-radius: 4px; background-size: cover; background-position: center; }
+  .sugg-chip .q { color: var(--text-2); }
+  .hist-filter-row { display: flex; gap: 8px; padding: 8px 12px; overflow-x: auto; background: var(--bg-elev); border-bottom: 1px solid var(--bg-soft); }
+  .hist-chip { width: 40px; height: 40px; border-radius: 50%; background: var(--bg-soft); display: flex; align-items: center; justify-content: center; font-size: 20px; flex: 0 0 40px; }
+  .hist-chip.on { background: var(--tint); color: #fff; }
+  .hist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px; }
+  .hist-cell {
+    padding: 10px; border-radius: 10px; display: flex; flex-direction: column; gap: 4px;
+    cursor: pointer;
+  }
+  .hist-cell.available { background: var(--tint-soft); color: var(--tint); }
+  .hist-cell.added { background: var(--bg-tert); color: var(--text-2); cursor: default; }
+  .hist-cell .h-name { font-weight: 500; font-size: 14px; }
+  .hist-cell .h-qty { font-size: 11px; color: var(--text-2); }
 
   /* Books */
-  .filter-row {
-    display: flex; gap: 8px; padding: 8px 12px; overflow-x: auto; align-items: center;
-  }
+  .filter-row { display: flex; gap: 8px; padding: 8px 12px; overflow-x: auto; align-items: center; }
   .pill {
     display: flex; align-items: center; gap: 6px;
     padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 500;
     border: 1.5px solid transparent;
   }
-  .pill .count {
-    padding: 1px 6px; border-radius: 999px;
-    background: rgba(255,255,255,0.2);
-  }
+  .pill .count { padding: 1px 6px; border-radius: 999px; background: rgba(255,255,255,0.2); }
   .pill.toFind  { background: color-mix(in srgb, var(--amber) 12%, transparent);  color: var(--amber); }
   .pill.toRead  { background: color-mix(in srgb, var(--blue) 12%, transparent);   color: var(--blue); }
   .pill.read    { background: color-mix(in srgb, var(--green) 12%, transparent);  color: var(--green); }
@@ -139,65 +190,100 @@
   .pill.toRead.active  { border-color: var(--blue); }
   .pill.read.active    { border-color: var(--green); }
   .pill.stopped.active { border-color: var(--gray); }
-
   .shelf { padding: 0 12px 24px; display: flex; flex-direction: column; gap: 14px; }
   .shelf-section-title { padding: 4px 4px; font-weight: 600; font-size: 15px; }
   .shelf-section-title.toFind  { color: var(--amber); }
   .shelf-section-title.toRead  { color: var(--blue); }
   .shelf-section-title.read    { color: var(--green); }
   .shelf-section-title.stopped { color: var(--gray); }
-
-  .book-card {
-    display: flex; gap: 12px;
-    background: var(--bg-elev); border-radius: 10px;
-    padding: 12px; margin-bottom: 8px;
-  }
+  .book-card { display: flex; gap: 12px; background: var(--bg-elev); border-radius: 10px; padding: 12px; margin-bottom: 8px; }
   .cover {
-    width: 50px; height: 72px; border-radius: 4px;
-    background-size: cover; background-position: center;
+    width: 50px; height: 72px; border-radius: 4px; background-size: cover; background-position: center;
     display: flex; align-items: center; justify-content: center;
-    color: #fff; text-align: center; font-size: 9px; font-weight: 500;
-    padding: 3px; flex: 0 0 50px;
+    color: #fff; text-align: center; font-size: 9px; font-weight: 500; padding: 3px; flex: 0 0 50px;
   }
   .cover.sm { width: 32px; height: 46px; flex: 0 0 32px; font-size: 7px; }
   .book-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
-  .book-title {
-    font-weight: 600; font-size: 14px;
-    text-decoration: underline; text-decoration-style: solid;
-    cursor: pointer;
-  }
+  .book-title { font-weight: 600; font-size: 14px; text-decoration: underline; cursor: pointer; }
   .book-year { font-style: italic; font-size: 12px; color: var(--text-2); margin-left: 4px; font-weight: 400; text-decoration: none; }
   .book-author { font-size: 12px; color: var(--text-2); }
   .book-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 4px; }
-  .book-actions .btn {
-    font-size: 12px; font-weight: 500;
-    padding: 4px 10px; border-radius: 999px;
-  }
+  .btn { font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 999px; }
   .btn.advance.toRead  { background: color-mix(in srgb, var(--blue) 15%, transparent);  color: var(--blue); }
   .btn.advance.read    { background: color-mix(in srgb, var(--green) 15%, transparent); color: var(--green); }
   .btn.advance.stopped { background: color-mix(in srgb, var(--gray) 18%, transparent);  color: var(--gray); }
   .btn.more { color: var(--text-2); background: transparent; padding: 4px 6px; }
-  .date-pill {
-    font-size: 12px; padding: 3px 8px; border-radius: 999px;
-  }
-  .date-pill.read    { background: color-mix(in srgb, var(--green) 12%, transparent); color: var(--green); }
-  .date-pill.stopped { background: color-mix(in srgb, var(--gray) 14%, transparent);  color: var(--gray); }
+  .date-pill { font-size: 12px; padding: 3px 8px; border-radius: 999px; }
+  .date-pill.read { background: color-mix(in srgb, var(--green) 12%, transparent); color: var(--green); }
+  .date-pill.stopped { background: color-mix(in srgb, var(--gray) 14%, transparent); color: var(--gray); }
   .book-side { display: flex; flex-direction: column; gap: 6px; align-items: center; }
-  .icon-btn {
-    width: 28px; height: 28px; border-radius: 50%; background: var(--bg-soft);
-    color: var(--text-2); display: flex; align-items: center; justify-content: center;
-    font-size: 14px;
-  }
-  .icon-btn.star.on { color: #ffcc00; background: var(--bg-soft); }
-
+  .icon-btn { width: 28px; height: 28px; border-radius: 50%; background: var(--bg-soft); color: var(--text-2); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .icon-btn.star.on { color: #ffcc00; }
   .more-panel { padding-top: 8px; border-top: 1px solid var(--bg-soft); margin-top: 8px; }
-  .more-row {
-    display: flex; gap: 8px; padding: 4px 0; align-items: center;
-  }
-  .more-row .add {
-    margin-left: auto; color: var(--tint); font-weight: 500; font-size: 12px;
-  }
+  .more-row { display: flex; gap: 8px; padding: 4px 0; align-items: center; }
+  .more-row .add { margin-left: auto; color: var(--tint); font-weight: 500; font-size: 12px; }
   .more-loading { font-size: 12px; color: var(--text-2); padding: 6px 0; }
+
+  /* Expenses */
+  .summary-row { display: flex; gap: 6px; padding: 8px 12px; }
+  .sum-pill {
+    flex: 1; padding: 8px 10px; border-radius: 999px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-weight: 600; font-size: 13px; border: 1.5px solid transparent;
+  }
+  .sum-pill.c { background: color-mix(in srgb, var(--blue) 10%, transparent);  color: var(--blue); }
+  .sum-pill.m { background: color-mix(in srgb, var(--purple) 10%, transparent);color: var(--purple); }
+  .sum-pill.bal { background: color-mix(in srgb, var(--text-2) 10%, transparent); color: var(--text-2); }
+  .sum-pill.bal.pos { color: var(--green); background: color-mix(in srgb, var(--green) 10%, transparent); }
+  .sum-pill.bal.neg { color: var(--red);   background: color-mix(in srgb, var(--red) 10%, transparent); }
+  .sum-pill.c.on { border-color: var(--blue); background: color-mix(in srgb, var(--blue) 20%, transparent); }
+  .sum-pill.m.on { border-color: var(--purple); background: color-mix(in srgb, var(--purple) 20%, transparent); }
+  .expense-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-top: 1px solid var(--bg-soft); }
+  .expense-row:first-child { border-top: 0; }
+  .owner-badge {
+    width: 26px; height: 26px; border-radius: 50%; color: #fff; font-weight: 700; font-size: 13px;
+    display: flex; align-items: center; justify-content: center; flex: 0 0 26px;
+  }
+  .owner-badge.c { background: var(--blue); }
+  .owner-badge.m { background: var(--purple); }
+  .expense-title { flex: 1; cursor: pointer; font-size: 14px; }
+  .expense-amount { font-weight: 600; font-size: 14px; }
+  .expense-amount.c { color: var(--blue); }
+  .expense-amount.m { color: var(--purple); }
+  .expense-date { font-size: 11px; color: var(--text-2); }
+
+  /* Travel */
+  .trip-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--bg-soft); cursor: pointer; }
+  .trip-row:first-child { border-top: 0; }
+  .trip-icon { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--tint); flex: 0 0 28px; }
+  .pill-mini { font-size: 11px; padding: 2px 6px; border-radius: 999px; font-weight: 500; }
+  .pill-mini.c { background: color-mix(in srgb, var(--blue) 18%, transparent); color: var(--blue); }
+  .pill-mini.m { background: color-mix(in srgb, var(--purple) 18%, transparent); color: var(--purple); }
+  .pill-mini.muted { background: color-mix(in srgb, var(--text-2) 12%, transparent); color: var(--text-2); }
+  .travel-pill {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 500;
+    border: 1.5px solid transparent;
+  }
+  .travel-pill.c { background: color-mix(in srgb, var(--blue) 12%, transparent); color: var(--blue); }
+  .travel-pill.m { background: color-mix(in srgb, var(--purple) 12%, transparent); color: var(--purple); }
+  .travel-pill.open { background: color-mix(in srgb, var(--orange) 12%, transparent); color: var(--orange); }
+  .travel-pill.c.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+  .travel-pill.m.on { background: var(--purple); color: #fff; border-color: var(--purple); }
+  .travel-pill.open.on { background: var(--orange); color: #fff; border-color: var(--orange); }
+  .travel-item-row { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-top: 1px solid var(--bg-soft); }
+  .travel-item-row:first-child { border-top: 0; }
+  .owner-check {
+    width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid;
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px;
+    cursor: pointer;
+  }
+  .owner-check.c { color: var(--blue); border-color: var(--blue); }
+  .owner-check.m { color: var(--purple); border-color: var(--purple); }
+  .owner-check.c.on { background: var(--blue); color: #fff; }
+  .owner-check.m.on { background: var(--purple); color: #fff; }
+  .travel-item-name { flex: 1; cursor: pointer; font-size: 14px; }
+  .travel-item-name.both { text-decoration: line-through; color: var(--text-2); }
 
   /* Modal */
   .modal-backdrop {
@@ -210,59 +296,47 @@
     max-height: 92vh; display: flex; flex-direction: column;
     border-radius: 14px 14px 0 0;
     padding-bottom: var(--safe-bot);
+    overflow: hidden;
   }
+  .modal .nav { position: relative; }
   .form { padding: 12px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
   .form-section { background: var(--bg-elev); border-radius: var(--radius); overflow: hidden; }
   .form-section h3 { margin: 0; padding: 8px 16px 4px; font-size: 12px; text-transform: uppercase; color: var(--text-2); font-weight: 500; letter-spacing: 0.04em; }
   .form-row { padding: 8px 16px 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .form-row input[type=text], .form-row input[type=number] {
+  .form-row input[type=text], .form-row input[type=number], .form-row input[type=date], .form-row select {
     flex: 1; min-width: 0; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--bg-tert); background: var(--bg);
   }
-  .field-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 8px 12px 12px; }
-  .field-pair input { padding: 10px 12px; border-radius: 10px; border: 1px solid var(--bg-tert); background: var(--bg); }
-
-  .dropdown {
-    background: var(--bg-elev); border-radius: 8px;
-    margin: 0 12px 12px; max-height: 50vh; overflow-y: auto;
-  }
-  .dd-row {
-    padding: 10px 12px; display: flex; align-items: center; gap: 8px;
-    border-top: 1px solid var(--bg-soft);
-  }
-  .dd-row:first-child { border-top: 0; }
-  .dd-row.tap { cursor: pointer; }
-  .dd-row.tap:active { background: var(--bg-soft); }
-  .dd-row .src { font-size: 11px; color: var(--text-2); }
-  .dd-row .name { flex: 1; font-size: 14px; min-width: 0; }
-  .dd-row .meta { font-size: 11px; color: var(--text-2); }
-  .dd-row .plus { color: var(--tint); font-size: 18px; }
-
-  /* Edit modal */
-  .picker-row { padding: 8px 12px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .seg { display: flex; gap: 4px; flex-wrap: wrap; }
   .seg button {
     padding: 6px 12px; border-radius: 8px; background: var(--bg-soft); color: var(--text); font-size: 13px;
   }
   .seg button.on { background: var(--tint); color: #fff; }
+  .seg button.c.on { background: var(--blue); }
+  .seg button.m.on { background: var(--purple); }
   .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; }
-  .switch {
-    width: 44px; height: 26px; border-radius: 999px; background: var(--bg-tert); position: relative;
-    transition: background 0.15s;
-  }
+  .switch { width: 44px; height: 26px; border-radius: 999px; background: var(--bg-tert); position: relative; }
   .switch.on { background: var(--green); }
-  .switch::after {
-    content: ''; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px;
-    background: #fff; border-radius: 50%; transition: left 0.15s;
-  }
+  .switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; background: #fff; border-radius: 50%; transition: left 0.15s; }
   .switch.on::after { left: 20px; }
   .dates-row { padding: 12px 16px; display: flex; justify-content: space-between; font-size: 13px; color: var(--text-2); border-top: 1px solid var(--bg-soft); }
   .dates-row:first-of-type { border-top: 0; }
-
-  .empty {
-    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 8px; color: var(--text-2); padding: 60px 24px; text-align: center;
-  }
-  .empty .e-icon { font-size: 48px; opacity: 0.5; }
-
+  .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(52px, 1fr)); gap: 10px; padding: 12px 16px; }
+  .icon-cell { width: 44px; height: 44px; border-radius: 8px; background: var(--bg-soft); display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto; border: 2px solid transparent; }
+  .icon-cell.on { background: var(--tint-soft); border-color: var(--tint); }
+  .dropdown { background: var(--bg-elev); border-radius: 8px; margin: 0 12px 12px; max-height: 50vh; overflow-y: auto; }
+  .dd-row { padding: 10px 12px; display: flex; align-items: center; gap: 8px; border-top: 1px solid var(--bg-soft); }
+  .dd-row:first-child { border-top: 0; }
+  .dd-row.tap { cursor: pointer; }
+  .dd-row .src { font-size: 11px; color: var(--text-2); }
+  .dd-row .name { flex: 1; font-size: 14px; min-width: 0; }
+  .dd-row .meta { font-size: 11px; color: var(--text-2); }
+  .dd-row .plus { color: var(--tint); font-size: 18px; }
+  .photo-pick { display: flex; align-items: center; gap: 12px; padding: 8px 16px 12px; }
+  .photo-pick .preview { width: 60px; height: 60px; border-radius: 8px; background: var(--bg-tert); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--gray); }
+  .link { color: var(--tint); font-weight: 500; }
+  .danger { color: var(--red); font-weight: 500; }
+  .cat-edit-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--bg-soft); cursor: pointer; }
+  .cat-edit-row:first-child { border-top: 0; }
   .helper-tip { font-size: 12px; color: var(--text-2); padding: 8px 16px; }
 </style>
 </head>
@@ -277,11 +351,64 @@
 // =====================================================================
 const APP_KEY = '6c8d4is46ktgahy';
 const REDIRECT_URI = window.location.origin + window.location.pathname;
-
-const BOOKS_PATH = '/books/list.json';
+const PATHS = {
+  shops:      '/shopping/shops.json',
+  shopCats:   '/shopping/categories.json',
+  history:    '/shopping/history.json',
+  books:      '/books/list.json',
+  expenses:   '/expenses/list.json',
+  trips:      '/travel/trips.json',
+  templates:  '/travel/templates.json',
+  travelCats: '/travel/categories.json'
+};
 
 // =====================================================================
-// Status metadata
+// Icon mappings (SF Symbol name → emoji)
+// =====================================================================
+const SHOPPING_ICONS = {
+  'cart': '🛒','basket': '🧺','carrot': '🥕','fork.knife': '🍴','fish': '🐟',
+  'wineglass': '🍷','mug': '☕','birthday.cake': '🎂','drop': '💧','leaf': '🌿',
+  'snowflake': '❄️','pills': '💊','heart': '❤️','house': '🏠','bubbles.and.sparkles': '🫧',
+  'tshirt': '👕','pawprint': '🐾','flower': '🌸','lightbulb': '💡','gift': '🎁',
+  'sparkles': '✨','cylinder.fill': '🥫','milk': '🥛','flame.fill': '🔥','popcorn.fill': '🍞'
+};
+const SHOPPING_ICON_LIST = Object.keys(SHOPPING_ICONS);
+const SHOPPING_DEFAULT_ICON = 'cart';
+
+const TRAVEL_ICONS = {
+  'tshirt': '👕','scissors': '✂️','pills': '💊','doc.text': '📄','laptopcomputer': '💻',
+  'headphones': '🎧','book': '📖','heart': '❤️','drop': '💧','sun.max': '☀️',
+  'snowflake': '❄️','umbrella': '☂️','car': '🚗','airplane': '✈️','bag': '🎒',
+  'key': '🔑','powerplug': '🔌','creditcard': '💳','camera': '📷','eyeglasses': '👓'
+};
+const TRAVEL_ICON_LIST = Object.keys(TRAVEL_ICONS);
+const TRAVEL_DEFAULT_ICON = 'bag';
+
+const UNCAT = '—';
+
+const DEFAULT_SHOP_CATEGORIES = [
+  { name: 'Produce', icon: 'carrot' },
+  { name: 'Dairy', icon: 'drop' },
+  { name: 'Meat & Fish', icon: 'fish' },
+  { name: 'Bakery', icon: 'birthday.cake' },
+  { name: 'Pantry', icon: 'basket' },
+  { name: 'Frozen', icon: 'snowflake' },
+  { name: 'Beverages', icon: 'mug' },
+  { name: 'Household', icon: 'house' }
+];
+const DEFAULT_TRAVEL_CATEGORIES = [
+  { name: 'Clothing', icon: 'tshirt' },
+  { name: 'Toiletries', icon: 'drop' },
+  { name: 'Electronics', icon: 'laptopcomputer' },
+  { name: 'Documents', icon: 'doc.text' },
+  { name: 'Medication', icon: 'pills' },
+  { name: 'Other', icon: 'bag' }
+];
+
+const UNIT_SYMBOL = { count: '×', gram: 'g', kilo: 'kg' };
+
+// =====================================================================
+// Book status metadata
 // =====================================================================
 const STATUSES = ['toFind', 'toRead', 'read', 'stopped'];
 const STATUS_LABEL = { toFind: 'To Find', toRead: 'To Read', read: 'Read', stopped: 'Stop' };
@@ -307,32 +434,45 @@ function base64url(buf) {
     .replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
 }
 async function sha256(str) { return crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)); }
-function randomVerifier() {
-  const bytes = crypto.getRandomValues(new Uint8Array(64));
-  return base64url(bytes);
-}
+function randomVerifier() { return base64url(crypto.getRandomValues(new Uint8Array(64))); }
 function ddMmYyyy(iso) {
   const d = new Date(iso);
   if (isNaN(d.getTime())) return '';
-  const dd = String(d.getDate()).padStart(2, '0');
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  return `${dd}/${mm}/${d.getFullYear()}`;
+  return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+}
+function formatEuros(amount) {
+  const sign = amount < 0 ? '-' : '';
+  return `${sign}€${Math.abs(amount).toFixed(2)}`;
 }
 function debounce(fn, ms) {
   let t = null;
-  return (...args) => {
-    if (t) clearTimeout(t);
-    t = setTimeout(() => { t = null; fn(...args); }, ms);
-  };
+  return (...args) => { if (t) clearTimeout(t); t = setTimeout(() => { t = null; fn(...args); }, ms); };
 }
 function placeholderColor(title) {
   let hash = 0;
   for (const ch of title) hash = (hash + ch.charCodeAt(0)) | 0;
-  const hue = (Math.abs(hash) % 360);
-  return `hsl(${hue}, 45%, 55%)`;
+  return `hsl(${(Math.abs(hash) % 360)}, 45%, 55%)`;
 }
-function firstThreeWords(title) {
-  return title.trim().split(/\s+/).slice(0, 3).join(' ');
+function firstThreeWords(title) { return title.trim().split(/\s+/).slice(0, 3).join(' '); }
+function quantityDisplay(q) {
+  const s = String(q.amount);
+  return q.unit === 'count' ? `${UNIT_SYMBOL[q.unit]}${s}` : `${s}${UNIT_SYMBOL[q.unit]}`;
+}
+function dataURLFromBase64Jpeg(b64) { return `data:image/jpeg;base64,${b64}`; }
+async function resizeImageToBase64(file, maxSide = 800, quality = 0.7) {
+  const dataUrl = await new Promise((res, rej) => {
+    const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file);
+  });
+  const img = await new Promise((res, rej) => {
+    const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = dataUrl;
+  });
+  const max = Math.max(img.width, img.height);
+  const scale = max > maxSide ? maxSide / max : 1;
+  const w = Math.round(img.width * scale), h = Math.round(img.height * scale);
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+  return canvas.toDataURL('image/jpeg', quality).split(',', 2)[1];
 }
 
 // =====================================================================
@@ -346,24 +486,19 @@ function clearRefreshToken() { localStorage.removeItem(TOKEN_KEY); }
 // =====================================================================
 // Dropbox PKCE auth
 // =====================================================================
-let accessToken = null;
-let accessTokenExp = 0;
+let accessToken = null, accessTokenExp = 0;
 
 async function startSignIn() {
   const verifier = randomVerifier();
   const challenge = base64url(await sha256(verifier));
   sessionStorage.setItem('pkce.verifier', verifier);
   const params = new URLSearchParams({
-    client_id: APP_KEY,
-    response_type: 'code',
-    code_challenge: challenge,
-    code_challenge_method: 'S256',
-    token_access_type: 'offline',
-    redirect_uri: REDIRECT_URI
+    client_id: APP_KEY, response_type: 'code',
+    code_challenge: challenge, code_challenge_method: 'S256',
+    token_access_type: 'offline', redirect_uri: REDIRECT_URI
   });
   window.location.href = `https://www.dropbox.com/oauth2/authorize?${params}`;
 }
-
 async function exchangeAuthCode(code) {
   const verifier = sessionStorage.getItem('pkce.verifier');
   sessionStorage.removeItem('pkce.verifier');
@@ -371,10 +506,7 @@ async function exchangeAuthCode(code) {
   const resp = await fetch('https://api.dropboxapi.com/oauth2/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      code, grant_type: 'authorization_code', client_id: APP_KEY,
-      redirect_uri: REDIRECT_URI, code_verifier: verifier
-    })
+    body: new URLSearchParams({ code, grant_type: 'authorization_code', client_id: APP_KEY, redirect_uri: REDIRECT_URI, code_verifier: verifier })
   });
   if (!resp.ok) throw new Error('Token exchange failed: ' + await resp.text());
   const j = await resp.json();
@@ -382,33 +514,28 @@ async function exchangeAuthCode(code) {
   accessTokenExp = Date.now() + (j.expires_in - 60) * 1000;
   if (j.refresh_token) saveRefreshToken(j.refresh_token);
 }
-
 async function refreshAccessToken() {
   const refresh = loadRefreshToken();
   if (!refresh) throw new Error('Not authenticated.');
   const resp = await fetch('https://api.dropboxapi.com/oauth2/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      grant_type: 'refresh_token', refresh_token: refresh, client_id: APP_KEY
-    })
+    body: new URLSearchParams({ grant_type: 'refresh_token', refresh_token: refresh, client_id: APP_KEY })
   });
   if (!resp.ok) { clearRefreshToken(); throw new Error('Refresh failed: ' + await resp.text()); }
   const j = await resp.json();
   accessToken = j.access_token;
   accessTokenExp = Date.now() + (j.expires_in - 60) * 1000;
 }
-
 async function ensureAccessToken() {
   if (accessToken && Date.now() < accessTokenExp) return accessToken;
   await refreshAccessToken();
   return accessToken;
 }
-
 function signOut() {
   clearRefreshToken();
   accessToken = null;
-  state.books = [];
+  Object.assign(state, freshState());
   state.view = 'signin';
   render();
 }
@@ -452,8 +579,7 @@ async function olSearchAuthors(query) {
   if (olAuthorSearchCache.has(key)) return olAuthorSearchCache.get(key);
   try {
     const url = new URL('https://openlibrary.org/search/authors.json');
-    url.searchParams.set('q', query);
-    url.searchParams.set('limit', '10');
+    url.searchParams.set('q', query); url.searchParams.set('limit', '10');
     const resp = await fetch(url);
     if (!resp.ok) return [];
     const j = await resp.json();
@@ -462,70 +588,102 @@ async function olSearchAuthors(query) {
     return docs;
   } catch { return []; }
 }
-
 async function olFetchAuthorBooks(author) {
   const key = author.toLowerCase().trim();
   if (olAuthorBookCache.has(key)) return olAuthorBookCache.get(key);
   try {
     const url = new URL('https://openlibrary.org/search.json');
-    url.searchParams.set('author', author);
-    url.searchParams.set('limit', '40');
+    url.searchParams.set('author', author); url.searchParams.set('limit', '40');
     const resp = await fetch(url);
     if (!resp.ok) return [];
     const j = await resp.json();
     const docs = (j.docs || []).map(d => ({
-      title: d.title,
-      first_publish_year: d.first_publish_year,
-      cover_i: d.cover_i,
+      title: d.title, first_publish_year: d.first_publish_year, cover_i: d.cover_i,
       coverURL: d.cover_i ? `https://covers.openlibrary.org/b/id/${d.cover_i}-M.jpg` : null
     }));
     olAuthorBookCache.set(key, docs);
     return docs;
   } catch { return []; }
 }
-
 function filterAuthorBooks(rawList) {
   const existing = new Set(state.books.map(b => b.title.toLowerCase()));
-  return rawList
-    .filter(b => !existing.has((b.title || '').toLowerCase()))
+  return rawList.filter(b => !existing.has((b.title || '').toLowerCase()))
     .sort((a, b) => (b.first_publish_year || 0) - (a.first_publish_year || 0));
 }
 
 // =====================================================================
 // State
 // =====================================================================
-const state = {
-  view: 'signin', // 'signin' | 'main' | 'books'
-  books: [],
-  loading: false,
-  error: null,
-  // Books-view UI:
-  bookFilter: null,        // null | 'toFind' | 'toRead' | 'read' | 'stopped'
-  showFavOnly: false,
-  expanded: new Set(),
-};
+function freshState() {
+  return {
+    view: 'signin',
+    nav: ['main'],
+    error: null, loading: false,
+    // Shopping
+    shops: [], shopCats: [], history: [],
+    // Books
+    books: [], bookFilter: null, showFavOnly: false, expanded: new Set(),
+    // Expenses
+    expenses: [], expenseFilter: null,
+    // Travel
+    trips: [], templates: [], travelCats: [],
+  };
+}
+const state = freshState();
 let modal = null;
 
-async function loadBooks() {
+function normaliseCategory(c, defaultIcon) {
+  if (typeof c === 'string') return { id: cryptoUUID(), name: c, icon: defaultIcon };
+  return { id: c.id || cryptoUUID(), name: c.name, icon: c.icon || defaultIcon };
+}
+
+async function loadAll() {
   state.loading = true; render();
   try {
-    const books = await dbxReadJSON(BOOKS_PATH) || [];
-    // Normalise: handle legacy missing fields and migrate "reading" → "toRead"
-    state.books = books.map(b => {
-      const status = b.status === 'reading' ? 'toRead'
-                   : (STATUSES.includes(b.status) ? b.status : 'toFind');
+    const [
+      shops, shopCats, history,
+      books,
+      expenses,
+      trips, templates, travelCats
+    ] = await Promise.all([
+      dbxReadJSON(PATHS.shops), dbxReadJSON(PATHS.shopCats), dbxReadJSON(PATHS.history),
+      dbxReadJSON(PATHS.books),
+      dbxReadJSON(PATHS.expenses),
+      dbxReadJSON(PATHS.trips), dbxReadJSON(PATHS.templates), dbxReadJSON(PATHS.travelCats)
+    ]);
+    state.shops = shops || [];
+    state.shopCats = (shopCats || DEFAULT_SHOP_CATEGORIES).map(c => normaliseCategory(c, SHOPPING_DEFAULT_ICON));
+    state.history = (history || []).sort((a, b) => new Date(b.lastUsedAt) - new Date(a.lastUsedAt));
+
+    state.books = (books || []).map(b => {
+      const status = b.status === 'reading' ? 'toRead' : (STATUSES.includes(b.status) ? b.status : 'toFind');
       return {
-        id: b.id || cryptoUUID(),
-        title: b.title || '',
-        author: b.author || '',
-        publicationYear: b.publicationYear ?? null,
-        coverURL: b.coverURL || null,
-        status,
+        id: b.id || cryptoUUID(), title: b.title || '', author: b.author || '',
+        publicationYear: b.publicationYear ?? null, coverURL: b.coverURL || null, status,
         addedAt: b.addedAt || new Date().toISOString(),
         statusChangedAt: b.statusChangedAt || b.addedAt || new Date().toISOString(),
         isFavourite: !!b.isFavourite
       };
     });
+
+    state.expenses = (expenses || []).map(e => ({
+      id: e.id || cryptoUUID(),
+      title: e.title || e.note || '',
+      amount: e.amount || 0,
+      owner: e.owner || 'c',
+      createdAt: e.createdAt || e.date || new Date().toISOString()
+    })).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    state.trips = (trips || []).map(t => ({
+      id: t.id || cryptoUUID(), name: t.name || '',
+      items: (t.items || []).map(normaliseTravelItem),
+      createdAt: t.createdAt || new Date().toISOString()
+    })).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    state.templates = (templates || []).map(t => ({
+      id: t.id || cryptoUUID(), name: t.name || '',
+      items: (t.items || []).map(normaliseTravelItem)
+    }));
+    state.travelCats = (travelCats || DEFAULT_TRAVEL_CATEGORIES).map(c => normaliseCategory(c, TRAVEL_DEFAULT_ICON));
   } catch (e) {
     state.error = e.message;
   } finally {
@@ -534,99 +692,338 @@ async function loadBooks() {
   }
 }
 
-async function saveBooks() {
-  try { await dbxWriteJSON(BOOKS_PATH, state.books); }
-  catch (e) { state.error = e.message; render(); }
+function normaliseTravelItem(it) {
+  let pc = it.packedByC, pm = it.packedByM;
+  if (pc === undefined && pm === undefined) {
+    const legacy = !!it.isPacked;
+    pc = legacy; pm = legacy;
+  }
+  return {
+    id: it.id || cryptoUUID(),
+    name: it.name || '',
+    category: it.category || null,
+    packedByC: !!pc, packedByM: !!pm
+  };
 }
 
 // =====================================================================
-// Book operations
+// Persistence helpers
+// =====================================================================
+async function saveShops() { try { await dbxWriteJSON(PATHS.shops, state.shops); } catch (e) { state.error = e.message; } }
+async function saveShopCats() { try { await dbxWriteJSON(PATHS.shopCats, state.shopCats); } catch (e) { state.error = e.message; } }
+async function saveHistory() { try { await dbxWriteJSON(PATHS.history, state.history); } catch (e) { state.error = e.message; } }
+async function saveBooks() { try { await dbxWriteJSON(PATHS.books, state.books); } catch (e) { state.error = e.message; render(); } }
+async function saveExpenses() { try { await dbxWriteJSON(PATHS.expenses, state.expenses); } catch (e) { state.error = e.message; render(); } }
+async function saveTrips() { try { await dbxWriteJSON(PATHS.trips, state.trips); } catch (e) { state.error = e.message; render(); } }
+async function saveTemplates() { try { await dbxWriteJSON(PATHS.templates, state.templates); } catch (e) { state.error = e.message; render(); } }
+async function saveTravelCats() { try { await dbxWriteJSON(PATHS.travelCats, state.travelCats); } catch (e) { state.error = e.message; render(); } }
+
+// =====================================================================
+// Shopping operations
+// =====================================================================
+function shopById(id) { return state.shops.find(s => s.id === id); }
+
+async function addShop(name, emoji) {
+  const t = (name || '').trim(); if (!t) return;
+  state.shops.push({ id: cryptoUUID(), name: t, emoji: emoji || '🛒', items: [] });
+  await saveShops(); render();
+}
+async function deleteShop(id) {
+  state.shops = state.shops.filter(s => s.id !== id);
+  await saveShops(); render();
+}
+async function addItem(shopId, item) {
+  const sh = shopById(shopId); if (!sh) return;
+  sh.items.push(item);
+  await saveShops(); render();
+}
+async function updateItem(shopId, item) {
+  const sh = shopById(shopId); if (!sh) return;
+  const i = sh.items.findIndex(x => x.id === item.id);
+  if (i < 0) return;
+  sh.items[i] = item;
+  await saveShops(); render();
+}
+async function deleteItem(shopId, id) {
+  const sh = shopById(shopId); if (!sh) return;
+  sh.items = sh.items.filter(i => i.id !== id);
+  await saveShops(); render();
+}
+async function toggleItem(shopId, id) {
+  const sh = shopById(shopId); if (!sh) return;
+  const it = sh.items.find(i => i.id === id); if (!it) return;
+  it.isChecked = !it.isChecked;
+  if (it.isChecked) upsertHistory(it);
+  await saveShops();
+  if (it.isChecked) await saveHistory();
+  render();
+}
+async function clearChecked(shopId) {
+  const sh = shopById(shopId); if (!sh) return;
+  for (const it of sh.items.filter(i => i.isChecked)) upsertHistory(it);
+  sh.items = sh.items.filter(i => !i.isChecked);
+  await saveShops(); await saveHistory(); render();
+}
+function upsertHistory(item) {
+  const key = item.name.trim().toLowerCase();
+  const entry = {
+    name: item.name.trim(), quantity: item.quantity, category: item.category || null,
+    photo: item.photo || null, lastUsedAt: new Date().toISOString()
+  };
+  const i = state.history.findIndex(h => h.name.toLowerCase() === key);
+  if (i >= 0) state.history[i] = entry; else state.history.push(entry);
+  state.history.sort((a, b) => new Date(b.lastUsedAt) - new Date(a.lastUsedAt));
+}
+async function addFromPrevious(shopId, prev) {
+  await addItem(shopId, {
+    id: cryptoUUID(), name: prev.name, quantity: prev.quantity,
+    category: prev.category || null, photo: prev.photo || null, isChecked: false
+  });
+}
+async function addShopCategory(name, icon) {
+  const t = (name || '').trim(); if (!t) return;
+  if (state.shopCats.some(c => c.name.toLowerCase() === t.toLowerCase())) return;
+  state.shopCats.push({ id: cryptoUUID(), name: t, icon });
+  await saveShopCats(); render();
+}
+async function updateShopCategory(original, newName, newIcon) {
+  const t = (newName || '').trim(); if (!t) return;
+  const idx = state.shopCats.findIndex(c => c.id === original.id);
+  if (idx < 0) return;
+  if (state.shopCats.some(c => c.id !== original.id && c.name.toLowerCase() === t.toLowerCase())) return;
+  const oldName = state.shopCats[idx].name;
+  state.shopCats[idx] = { ...state.shopCats[idx], name: t, icon: newIcon };
+  if (oldName !== t) {
+    for (const s of state.shops) for (const it of s.items) if (it.category === oldName) it.category = t;
+    for (const h of state.history) if (h.category === oldName) h.category = t;
+    await saveShops(); await saveHistory();
+  }
+  await saveShopCats(); render();
+}
+async function deleteShopCategory(cat) {
+  state.shopCats = state.shopCats.filter(c => c.id !== cat.id);
+  for (const s of state.shops) for (const it of s.items) if (it.category === cat.name) it.category = null;
+  for (const h of state.history) if (h.category === cat.name) h.category = null;
+  await Promise.all([saveShopCats(), saveShops(), saveHistory()]); render();
+}
+function moveShopCategory(from, to) {
+  if (from === to || from < 0 || to < 0) return;
+  const list = state.shopCats.slice();
+  const [moved] = list.splice(from, 1);
+  list.splice(to, 0, moved);
+  state.shopCats = list;
+  saveShopCats().then(render);
+}
+
+// =====================================================================
+// Books operations
 // =====================================================================
 async function addBook({ title, author, publicationYear, coverURL }) {
   const now = new Date().toISOString();
   state.books.push({
-    id: cryptoUUID(),
-    title: (title || '').trim(),
-    author: (author || '').trim(),
-    publicationYear: publicationYear || null,
-    coverURL: coverURL || null,
-    status: 'toFind',
-    addedAt: now,
-    statusChangedAt: now,
-    isFavourite: false
+    id: cryptoUUID(), title: (title || '').trim(), author: (author || '').trim(),
+    publicationYear: publicationYear || null, coverURL: coverURL || null,
+    status: 'toFind', addedAt: now, statusChangedAt: now, isFavourite: false
   });
   await saveBooks(); render();
 }
-
-async function setStatus(book, status) {
+async function setBookStatus(book, status) {
   const b = state.books.find(x => x.id === book.id);
   if (!b || b.status === status) return;
-  b.status = status;
-  b.statusChangedAt = new Date().toISOString();
+  b.status = status; b.statusChangedAt = new Date().toISOString();
   await saveBooks(); render();
 }
-
-async function toggleFavourite(book) {
-  const b = state.books.find(x => x.id === book.id);
-  if (!b) return;
+async function toggleBookFavourite(book) {
+  const b = state.books.find(x => x.id === book.id); if (!b) return;
   b.isFavourite = !b.isFavourite;
   await saveBooks(); render();
 }
-
 async function updateBook(original, patch) {
-  const b = state.books.find(x => x.id === original.id);
-  if (!b) return;
-  const titleOrAuthorChanged = patch.title !== b.title || patch.author !== b.author;
+  const b = state.books.find(x => x.id === original.id); if (!b) return;
+  const titleAuthorChanged = patch.title !== b.title || patch.author !== b.author;
   const yearCoverUntouched = patch.publicationYear === b.publicationYear && patch.coverURL === b.coverURL;
   if (b.status !== patch.status) b.statusChangedAt = new Date().toISOString();
-  b.title = patch.title.trim();
-  b.author = patch.author.trim();
+  b.title = patch.title.trim(); b.author = patch.author.trim();
   b.publicationYear = patch.publicationYear || null;
-  b.status = patch.status;
-  b.isFavourite = !!patch.isFavourite;
-  if (titleOrAuthorChanged && yearCoverUntouched) {
-    // Refetch from OL
+  b.status = patch.status; b.isFavourite = !!patch.isFavourite;
+  if (titleAuthorChanged && yearCoverUntouched) {
     const list = await olFetchAuthorBooks(b.author);
     const match = list.find(x => x.title.toLowerCase() === b.title.toLowerCase());
-    if (match) {
-      b.publicationYear = match.first_publish_year || null;
-      b.coverURL = match.coverURL || null;
-    }
-  } else {
-    if (patch.publicationYear !== undefined) b.publicationYear = patch.publicationYear || null;
+    if (match) { b.publicationYear = match.first_publish_year || null; b.coverURL = match.coverURL || null; }
   }
   await saveBooks(); render();
 }
-
 async function deleteBook(book) {
   state.books = state.books.filter(b => b.id !== book.id);
   await saveBooks(); render();
 }
-
-function countFor(status, favOnly) {
+function countBooksFor(status, favOnly) {
   return state.books.filter(b => b.status === status && (!favOnly || b.isFavourite)).length;
 }
-
-function sectionsForRender() {
+function bookSections() {
   let books = state.books;
   if (state.bookFilter) books = books.filter(b => b.status === state.bookFilter);
   if (state.showFavOnly) books = books.filter(b => b.isFavourite);
   const out = [];
-  for (const status of STATUSES) {
-    const items = books.filter(b => b.status === status);
-    if (items.length === 0) continue;
-    if (status === 'toFind') items.sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt));
+  for (const s of STATUSES) {
+    const items = books.filter(b => b.status === s);
+    if (!items.length) continue;
+    if (s === 'toFind') items.sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt));
     else items.sort((a, b) => new Date(b.statusChangedAt) - new Date(a.statusChangedAt));
-    out.push({ status, items });
+    out.push({ status: s, items });
   }
   return out;
 }
 
 // =====================================================================
-// View navigation
+// Expense operations
 // =====================================================================
-function goMain() { state.view = 'main'; render(); }
-function goBooks() { state.view = 'books'; render(); }
+async function addExpense(title, amount, owner) {
+  const t = (title || '').trim(); if (!t || !(amount > 0)) return;
+  state.expenses.unshift({ id: cryptoUUID(), title: t, amount, owner, createdAt: new Date().toISOString() });
+  state.expenses.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  await saveExpenses(); render();
+}
+async function updateExpense(original, patch) {
+  const e = state.expenses.find(x => x.id === original.id); if (!e) return;
+  e.title = (patch.title || '').trim(); e.amount = patch.amount; e.owner = patch.owner; e.createdAt = patch.createdAt;
+  state.expenses.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  await saveExpenses(); render();
+}
+async function deleteExpense(e) {
+  state.expenses = state.expenses.filter(x => x.id !== e.id);
+  await saveExpenses(); render();
+}
+function expenseTotalFor(o) { return state.expenses.filter(e => e.owner === o).reduce((s, e) => s + e.amount, 0); }
+function expenseSuggestions(q) {
+  const t = (q || '').trim().toLowerCase(); if (!t) return [];
+  const seen = new Set(); const out = [];
+  for (const e of state.expenses) {
+    const k = e.title.toLowerCase();
+    if (seen.has(k) || !k.includes(t)) continue;
+    seen.add(k); out.push({ title: e.title, owner: e.owner });
+    if (out.length >= 5) break;
+  }
+  return out;
+}
+
+// =====================================================================
+// Travel operations
+// =====================================================================
+function tripById(id) { return state.trips.find(t => t.id === id); }
+function templateById(id) { return state.templates.find(t => t.id === id); }
+
+async function addTrip(name, fromTemplate) {
+  const t = (name || '').trim(); if (!t) return;
+  const items = fromTemplate
+    ? fromTemplate.items.map(i => ({ id: cryptoUUID(), name: i.name, category: i.category, packedByC: false, packedByM: false }))
+    : [];
+  state.trips.unshift({ id: cryptoUUID(), name: t, items, createdAt: new Date().toISOString() });
+  await saveTrips(); render();
+}
+async function renameTrip(id, newName) {
+  const tr = tripById(id); if (!tr) return;
+  tr.name = (newName || '').trim() || tr.name;
+  await saveTrips(); render();
+}
+async function deleteTrip(id) {
+  state.trips = state.trips.filter(t => t.id !== id);
+  await saveTrips(); render();
+}
+async function addTripItem(tripId, item) {
+  const tr = tripById(tripId); if (!tr) return;
+  tr.items.push(item);
+  await saveTrips(); render();
+}
+async function updateTripItem(tripId, item) {
+  const tr = tripById(tripId); if (!tr) return;
+  const i = tr.items.findIndex(x => x.id === item.id); if (i < 0) return;
+  tr.items[i] = item;
+  await saveTrips(); render();
+}
+async function deleteTripItem(tripId, id) {
+  const tr = tripById(tripId); if (!tr) return;
+  tr.items = tr.items.filter(i => i.id !== id);
+  await saveTrips(); render();
+}
+async function togglePacked(tripId, itemId, who) {
+  const tr = tripById(tripId); if (!tr) return;
+  const it = tr.items.find(i => i.id === itemId); if (!it) return;
+  if (who === 'c') it.packedByC = !it.packedByC; else it.packedByM = !it.packedByM;
+  await saveTrips(); render();
+}
+async function addTemplate(name) {
+  const t = (name || '').trim(); if (!t) return;
+  state.templates.push({ id: cryptoUUID(), name: t, items: [] });
+  await saveTemplates(); render();
+}
+async function renameTemplate(id, newName) {
+  const tmpl = templateById(id); if (!tmpl) return;
+  tmpl.name = (newName || '').trim() || tmpl.name;
+  await saveTemplates(); render();
+}
+async function deleteTemplate(id) {
+  state.templates = state.templates.filter(t => t.id !== id);
+  await saveTemplates(); render();
+}
+async function addTemplateItem(templateId, item) {
+  const tmpl = templateById(templateId); if (!tmpl) return;
+  tmpl.items.push(item);
+  await saveTemplates(); render();
+}
+async function updateTemplateItem(templateId, item) {
+  const tmpl = templateById(templateId); if (!tmpl) return;
+  const i = tmpl.items.findIndex(x => x.id === item.id); if (i < 0) return;
+  tmpl.items[i] = item;
+  await saveTemplates(); render();
+}
+async function deleteTemplateItem(templateId, id) {
+  const tmpl = templateById(templateId); if (!tmpl) return;
+  tmpl.items = tmpl.items.filter(i => i.id !== id);
+  await saveTemplates(); render();
+}
+async function addTravelCategory(name, icon) {
+  const t = (name || '').trim(); if (!t) return;
+  if (state.travelCats.some(c => c.name.toLowerCase() === t.toLowerCase())) return;
+  state.travelCats.push({ id: cryptoUUID(), name: t, icon });
+  await saveTravelCats(); render();
+}
+async function updateTravelCategory(original, newName, newIcon) {
+  const t = (newName || '').trim(); if (!t) return;
+  const idx = state.travelCats.findIndex(c => c.id === original.id);
+  if (idx < 0) return;
+  if (state.travelCats.some(c => c.id !== original.id && c.name.toLowerCase() === t.toLowerCase())) return;
+  const oldName = state.travelCats[idx].name;
+  state.travelCats[idx] = { ...state.travelCats[idx], name: t, icon: newIcon };
+  if (oldName !== t) {
+    for (const tr of state.trips) for (const it of tr.items) if (it.category === oldName) it.category = t;
+    for (const tm of state.templates) for (const it of tm.items) if (it.category === oldName) it.category = t;
+    await saveTrips(); await saveTemplates();
+  }
+  await saveTravelCats(); render();
+}
+async function deleteTravelCategory(cat) {
+  state.travelCats = state.travelCats.filter(c => c.id !== cat.id);
+  for (const tr of state.trips) for (const it of tr.items) if (it.category === cat.name) it.category = null;
+  for (const tm of state.templates) for (const it of tm.items) if (it.category === cat.name) it.category = null;
+  await Promise.all([saveTravelCats(), saveTrips(), saveTemplates()]); render();
+}
+function moveTravelCategory(from, to) {
+  if (from === to || from < 0 || to < 0) return;
+  const list = state.travelCats.slice();
+  const [moved] = list.splice(from, 1);
+  list.splice(to, 0, moved);
+  state.travelCats = list;
+  saveTravelCats().then(render);
+}
+
+// =====================================================================
+// Navigation
+// =====================================================================
+function navTo(route) { state.nav.push(route); render(); }
+function navBack() { if (state.nav.length > 1) { state.nav.pop(); render(); } }
+function navHome() { state.nav = ['main']; render(); }
+function currentRoute() { return state.nav[state.nav.length - 1]; }
 
 function openModal(node) { modal = node; render(); }
 function closeModal() { modal = null; render(); }
@@ -638,43 +1035,52 @@ function el(tag, cls, ...kids) {
   const e = document.createElement(tag);
   if (cls) e.className = cls;
   for (const k of kids) {
-    if (k == null) continue;
+    if (k == null || k === false) continue;
     if (typeof k === 'string' || typeof k === 'number') e.appendChild(document.createTextNode(String(k)));
     else e.appendChild(k);
   }
   return e;
 }
 function button(cls, text, onclick) {
-  const b = el('button', cls, text);
-  b.type = 'button';
+  const b = el('button', cls, text); b.type = 'button';
   if (onclick) b.onclick = onclick;
   return b;
 }
 
 // =====================================================================
-// Render
+// Render router
 // =====================================================================
 const root = document.getElementById('app');
 function render() {
   root.innerHTML = '';
   let main;
-  switch (state.view) {
-    case 'signin': main = signInScreen(); break;
-    case 'main':   main = mainScreen(); break;
-    case 'books':  main = booksScreen(); break;
-    default:       main = mainScreen();
+  if (state.view === 'signin') {
+    main = signInScreen();
+  } else {
+    const route = currentRoute();
+    if (route === 'main') main = mainScreen();
+    else if (route === 'shopping') main = shoppingHomeScreen();
+    else if (route === 'books') main = booksScreen();
+    else if (route === 'expenses') main = expensesScreen();
+    else if (route === 'travel') main = travelHomeScreen();
+    else if (route && route.v === 'shop') main = shopDetailScreen(route.id);
+    else if (route && route.v === 'trip') main = tripDetailScreen(route.id);
+    else if (route && route.v === 'template') main = templateDetailScreen(route.id);
+    else main = mainScreen();
   }
   root.appendChild(main);
   if (modal) root.appendChild(modal);
 }
 
-// ---- Sign in ----
+// =====================================================================
+// Sign in
+// =====================================================================
 function signInScreen() {
   const wrap = el('div', 'signin');
   wrap.append(
-    el('div', '', '📚'),
+    el('div', '', '🛍️'),
     el('h1', '', 'MarXris'),
-    el('p', '', 'Your bookshelf, stored in your own Dropbox.'),
+    el('p', '', 'Your shopping, books, expenses, and travel — stored in your own Dropbox.'),
     button('primary', 'Connect Dropbox', startSignIn),
     el('div', 'help', '',
       'Register this page as an OAuth Redirect URI in your Dropbox developer app first:',
@@ -686,87 +1092,541 @@ function signInScreen() {
   return wrap;
 }
 
-// ---- Main ----
+// =====================================================================
+// Main
+// =====================================================================
 function mainScreen() {
   const wrap = el('div'); wrap.style.display = 'flex'; wrap.style.flexDirection = 'column'; wrap.style.flex = '1';
+  const nav = el('div', 'nav');
+  nav.append(el('div', 'ghost'), el('div', 'nav-title', ''), button('icon', '⚙', openAccountModal));
+  wrap.appendChild(nav);
 
   const scroll = el('div', 'scroll');
   scroll.appendChild(el('div', 'main-welcome', 'Welcome to MarXris'));
 
   const grid = el('div', 'main-grid');
   grid.append(
-    tile('shopping', '🛒', 'Shopping', null, true),
-    tile('expenses', '💳', 'Expenses', null, true),
-    tile('books',    '📚', 'Books',    goBooks, false),
-    tile('travel',   '🧳', 'Travel',   null, true)
+    tile('shopping', '🛒', 'Shopping', () => navTo('shopping')),
+    tile('expenses', '💳', 'Expenses', () => navTo('expenses')),
+    tile('books',    '📚', 'Books',    () => navTo('books')),
+    tile('travel',   '🧳', 'Travel',   () => navTo('travel'))
   );
   scroll.appendChild(grid);
-
-  const account = el('div', 'account-card');
-  const row = el('div', 'acc-row');
-  row.appendChild(el('div', '', '✓ Connected to Dropbox'));
-  account.appendChild(row);
-  const signOutRow = el('div', 'acc-row');
-  signOutRow.appendChild(button('danger', 'Sign Out from Dropbox', signOut));
-  account.appendChild(signOutRow);
-  scroll.appendChild(account);
-
+  if (state.loading) scroll.appendChild(el('div', 'helper-tip', 'Loading…'));
+  if (state.error) scroll.appendChild(el('div', 'err', state.error));
   wrap.appendChild(scroll);
   return wrap;
 }
-
-function tile(klass, icon, name, onclick, disabled) {
-  const t = el('div', `tile ${klass}${disabled ? ' disabled' : ''}`);
-  t.append(
-    el('div', 'tile-icon', icon),
-    el('div', 'tile-name', name)
-  );
-  if (!disabled && onclick) t.onclick = onclick;
-  if (disabled) t.title = 'Coming soon';
+function tile(klass, icon, name, onclick) {
+  const t = el('div', `tile ${klass}`);
+  t.append(el('div', 'tile-icon', icon), el('div', 'tile-name', name));
+  t.onclick = onclick;
   return t;
 }
+function navWith(title, opts = {}) {
+  const nav = el('div', 'nav');
+  if (opts.back) nav.appendChild(button('', '‹', opts.back));
+  else nav.appendChild(el('div', 'ghost'));
+  nav.appendChild(el('div', 'nav-title', title));
+  if (opts.right) nav.appendChild(opts.right);
+  else nav.appendChild(el('div', 'ghost'));
+  return nav;
+}
+function mainBottomBar() {
+  const b = el('div', 'bottombar');
+  b.appendChild(button('', '🏠 Main', navHome));
+  return b;
+}
 
-// ---- Books ----
-function booksScreen() {
-  const wrap = el('div'); wrap.style.display = 'flex'; wrap.style.flexDirection = 'column'; wrap.style.flex = '1';
+// =====================================================================
+// Account modal
+// =====================================================================
+function openAccountModal() {
+  const backdrop = el('div', 'modal-backdrop');
+  const m = el('div', 'modal');
+  const nav = el('div', 'nav');
+  nav.append(el('div', 'ghost'), el('div', 'nav-title', 'Account'), button('', 'Done', () => { backdrop.remove(); closeModal(); }));
+  m.appendChild(nav);
+  const form = el('div', 'form');
+
+  const sDropbox = el('div', 'form-section');
+  sDropbox.appendChild(el('h3', '', 'Dropbox'));
+  const acc = el('div', 'form-row');
+  acc.append(el('span', '', '✓ Connected to Dropbox'));
+  sDropbox.appendChild(acc);
+  form.appendChild(sDropbox);
+
+  const sShopping = el('div', 'form-section');
+  sShopping.appendChild(el('h3', '', 'Shopping'));
+  const sCats = el('div', 'form-row');
+  const sCatsBtn = button('link', '🏷 Categories', () => { backdrop.remove(); closeModal(); openShopCategoriesModal(); });
+  sCats.appendChild(sCatsBtn);
+  sShopping.appendChild(sCats);
+  form.appendChild(sShopping);
+
+  const sTravel = el('div', 'form-section');
+  sTravel.appendChild(el('h3', '', 'Travel'));
+  const tCats = el('div', 'form-row');
+  tCats.appendChild(button('link', '🏷 Categories', () => { backdrop.remove(); closeModal(); openTravelCategoriesModal(); }));
+  sTravel.appendChild(tCats);
+  form.appendChild(sTravel);
+
+  const sSign = el('div', 'form-section');
+  const so = el('div', 'form-row');
+  so.appendChild(button('danger', 'Sign Out from Dropbox', () => { backdrop.remove(); closeModal(); signOut(); }));
+  sSign.appendChild(so);
+  form.appendChild(sSign);
+
+  m.appendChild(form);
+  backdrop.appendChild(m);
+  backdrop.onclick = (e) => { if (e.target === backdrop) { backdrop.remove(); closeModal(); } };
+  openModal(backdrop);
+}
+
+function openShopCategoriesModal() { categoriesPrefsModal({
+  title: 'Shopping Categories', list: state.shopCats, iconMap: SHOPPING_ICONS, iconList: SHOPPING_ICON_LIST,
+  defaultIcon: SHOPPING_DEFAULT_ICON,
+  add: addShopCategory, update: updateShopCategory, remove: deleteShopCategory, move: moveShopCategory
+}); }
+function openTravelCategoriesModal() { categoriesPrefsModal({
+  title: 'Travel Categories', list: state.travelCats, iconMap: TRAVEL_ICONS, iconList: TRAVEL_ICON_LIST,
+  defaultIcon: TRAVEL_DEFAULT_ICON,
+  add: addTravelCategory, update: updateTravelCategory, remove: deleteTravelCategory, move: moveTravelCategory
+}); }
+
+function categoriesPrefsModal({ title, list, iconMap, iconList, defaultIcon, add, update, remove, move }) {
+  const backdrop = el('div', 'modal-backdrop');
+  const m = el('div', 'modal'); m.style.height = '92vh';
+  const close = () => { backdrop.remove(); closeModal(); };
+
+  function rebuild() {
+    m.innerHTML = '';
+    const nav = el('div', 'nav');
+    nav.append(button('', 'Cancel', close), el('div', 'nav-title', title),
+      button('', '+ Add', () => openCategoryEditor({ mode: 'new', title, iconMap, iconList, defaultIcon, save: add, onClose: rebuild })));
+    m.appendChild(nav);
+    const scroll = el('div', 'scroll');
+    const card = el('div', 'section-card'); card.style.margin = '12px';
+    if (list.length === 0) {
+      scroll.appendChild(el('div', 'empty', el('div', 'e-icon', '🏷'), el('div', '', 'No Categories')));
+    } else {
+      list.forEach((c, i) => {
+        const row = el('div', 'cat-edit-row');
+        row.append(
+          el('span', '', iconMap[c.icon] || '·'),
+          el('div', 'grow', c.name),
+          button('link', '↑', (ev) => { ev.stopPropagation(); move(i, Math.max(0, i - 1)); }),
+          button('link', '↓', (ev) => { ev.stopPropagation(); move(i, Math.min(list.length - 1, i + 1)); }),
+          button('link', 'Edit', (ev) => { ev.stopPropagation();
+            openCategoryEditor({ mode: 'edit', original: c, title, iconMap, iconList, defaultIcon, save: update, onClose: rebuild });
+          }),
+          button('danger', '✕', (ev) => {
+            ev.stopPropagation();
+            if (confirm(`Delete "${c.name}"?`)) { remove(c).then(rebuild); }
+          })
+        );
+        card.appendChild(row);
+      });
+      scroll.appendChild(card);
+    }
+    m.appendChild(scroll);
+  }
+  rebuild();
+  backdrop.appendChild(m);
+  backdrop.onclick = (e) => { if (e.target === backdrop) close(); };
+  openModal(backdrop);
+}
+
+function openCategoryEditor({ mode, original, iconMap, iconList, defaultIcon, save, onClose }) {
+  let name = mode === 'new' ? '' : original.name;
+  let icon = mode === 'new' ? defaultIcon : original.icon;
+  const backdrop = el('div', 'modal-backdrop');
+  const m = el('div', 'modal');
 
   const nav = el('div', 'nav');
-  nav.append(
-    el('div', 'ghost'),
-    el('div', 'nav-title', 'Book Shelf'),
-    button('icon', state.showFavOnly ? '★' : '☆', () => {
-      state.showFavOnly = !state.showFavOnly; render();
-    }),
-    button('icon', '＋', () => openAddBookModal())
-  );
-  wrap.appendChild(nav);
+  const close = () => { backdrop.remove(); closeModal(); if (onClose) onClose(); };
+  nav.append(button('', 'Cancel', close), el('div', 'nav-title', mode === 'new' ? 'New Category' : 'Edit Category'),
+    button('', 'Save', async () => {
+      if (!name.trim()) return;
+      if (mode === 'new') await save(name, icon);
+      else await save(original, name, icon);
+      close();
+    }));
+  m.appendChild(nav);
+
+  const form = el('div', 'form');
+  const s1 = el('div', 'form-section'); s1.appendChild(el('h3', '', 'Name'));
+  const nIn = el('input'); nIn.type = 'text'; nIn.value = name;
+  nIn.addEventListener('input', () => name = nIn.value);
+  s1.appendChild(el('div', 'form-row', nIn));
+  form.appendChild(s1);
+
+  const s2 = el('div', 'form-section'); s2.appendChild(el('h3', '', 'Icon'));
+  const grid = el('div', 'icon-grid');
+  iconList.forEach(k => {
+    const c = el('button', 'icon-cell', iconMap[k]);
+    if (k === icon) c.classList.add('on');
+    c.onclick = () => { icon = k; [...grid.children].forEach(x => x.classList.remove('on')); c.classList.add('on'); };
+    grid.appendChild(c);
+  });
+  s2.appendChild(grid);
+  form.appendChild(s2);
+
+  m.appendChild(form);
+  backdrop.appendChild(m);
+  backdrop.onclick = (e) => { if (e.target === backdrop) close(); };
+  openModal(backdrop);
+}
+
+// =====================================================================
+// SHOPPING
+// =====================================================================
+function shoppingHomeScreen() {
+  const wrap = el('div'); wrap.style.display = 'flex'; wrap.style.flexDirection = 'column'; wrap.style.flex = '1';
+  wrap.appendChild(navWith('Shopping', {
+    back: navBack,
+    right: button('icon', '＋', () => openNewShopModal())
+  }));
+  const scroll = el('div', 'scroll');
+  if (state.shops.length === 0) {
+    scroll.appendChild(el('div', 'empty', el('div', 'e-icon', '🏪'), el('div', '', el('strong', '', 'No Shops')), el('div', '', 'Tap + to add one.')));
+  } else {
+    const list = el('div', 'group-list');
+    const card = el('div', 'section-card');
+    state.shops.forEach(shop => {
+      const row = el('div', 'row tap');
+      row.onclick = () => navTo({ v: 'shop', id: shop.id });
+      row.append(
+        el('div', 'shop-emoji', shop.emoji),
+        el('div', 'grow',
+          el('div', '', shop.name),
+          el('div', 'muted', `${shop.items.length} item${shop.items.length === 1 ? '' : 's'}`)
+        ),
+        button('danger', '✕', (e) => { e.stopPropagation(); if (confirm(`Delete "${shop.name}"?`)) deleteShop(shop.id); }),
+        el('div', 'chev', '›')
+      );
+      card.appendChild(row);
+    });
+    list.appendChild(card);
+    scroll.appendChild(list);
+  }
+  wrap.appendChild(scroll);
+  wrap.appendChild(mainBottomBar());
+  return wrap;
+}
+
+function openNewShopModal() {
+  let name = '', emoji = '🛒';
+  const backdrop = el('div', 'modal-backdrop');
+  const m = el('div', 'modal');
+  const close = () => { backdrop.remove(); closeModal(); };
+  const nav = el('div', 'nav');
+  nav.append(button('', 'Cancel', close), el('div', 'nav-title', 'New Shop'),
+    button('', 'Save', async () => { if (!name.trim()) return; await addShop(name, emoji); close(); }));
+  m.appendChild(nav);
+  const form = el('div', 'form');
+  const s1 = el('div', 'form-section'); s1.appendChild(el('h3', '', 'Name'));
+  const nIn = el('input'); nIn.type = 'text'; nIn.addEventListener('input', () => name = nIn.value);
+  s1.appendChild(el('div', 'form-row', nIn));
+  const s2 = el('div', 'form-section'); s2.appendChild(el('h3', '', 'Icon (emoji)'));
+  const eIn = el('input'); eIn.type = 'text'; eIn.value = emoji; eIn.style.fontSize = '24px'; eIn.style.maxWidth = '120px';
+  eIn.addEventListener('input', () => { emoji = [...eIn.value].pop() || '🛒'; });
+  s2.appendChild(el('div', 'form-row', eIn));
+  form.append(s1, s2);
+  m.appendChild(form);
+  backdrop.appendChild(m);
+  backdrop.onclick = (e) => { if (e.target === backdrop) close(); };
+  openModal(backdrop);
+}
+
+function shopDetailScreen(shopId) {
+  const wrap = el('div'); wrap.style.display = 'flex'; wrap.style.flexDirection = 'column'; wrap.style.flex = '1';
+  const shop = shopById(shopId);
+  wrap.appendChild(navWith(shop ? shop.name : 'Shop', {
+    back: navBack,
+    right: el('div', '', button('icon', '🕓', () => openHistoryModal(shopId)),
+      button('icon', '🗑', () => { if (shop && shop.items.some(i => i.isChecked) && confirm('Clear all checked items?')) clearChecked(shopId); }))
+  }));
 
   const scroll = el('div', 'scroll');
+  if (!shop || shop.items.length === 0) {
+    scroll.appendChild(el('div', 'empty', el('div', 'e-icon', '🛒'), el('div', '', el('strong', '', 'No Items')), el('div', '', 'Add items below.')));
+  } else {
+    scroll.appendChild(shopItemsList(shop));
+  }
+  wrap.appendChild(scroll);
 
-  // Filter pills
+  // Suggestions + add bar
+  let newName = '', selectedCategory = null;
+  const sugWrap = el('div');
+  const inputName = el('input', 'name'); inputName.type = 'text'; inputName.placeholder = 'Add item…';
+
+  function refreshSuggestions() {
+    const q = inputName.value.trim().toLowerCase();
+    sugWrap.innerHTML = '';
+    if (!q) return;
+    const matches = state.history.filter(h => h.name.toLowerCase().includes(q)).slice(0, 6);
+    if (!matches.length) return;
+    const bar = el('div', 'suggestions');
+    matches.forEach(h => {
+      const chip = el('button', 'sugg-chip');
+      if (h.photo) {
+        const t = el('div', 'thumb'); t.style.backgroundImage = `url(${dataURLFromBase64Jpeg(h.photo)})`;
+        chip.appendChild(t);
+      }
+      chip.append(el('span', '', h.name), el('span', 'q', quantityDisplay(h.quantity)));
+      chip.onclick = async () => { await addFromPrevious(shopId, h); inputName.value = ''; refreshSuggestions(); };
+      bar.appendChild(chip);
+    });
+    sugWrap.appendChild(bar);
+  }
+  inputName.addEventListener('input', () => { newName = inputName.value; refreshSuggestions(); plus.disabled = !newName.trim(); });
+
+  const catSel = el('select');
+  function rebuildCatOpts() {
+    catSel.innerHTML = '';
+    const o0 = el('option', '', `${UNCAT}  Uncategorised`); o0.value = ''; catSel.appendChild(o0);
+    state.shopCats.forEach(c => {
+      const o = el('option', '', `${SHOPPING_ICONS[c.icon] || '·'}  ${c.name}`); o.value = c.name; catSel.appendChild(o);
+    });
+  }
+  rebuildCatOpts(); catSel.onchange = () => selectedCategory = catSel.value || null;
+
+  const plus = el('button', 'plus', '＋'); plus.disabled = true;
+  function commit() {
+    const t = newName.trim(); if (!t) return;
+    const prev = state.history.find(h => h.name.toLowerCase() === t.toLowerCase());
+    if (prev) {
+      addFromPrevious(shopId, prev).then(() => { inputName.value = ''; newName = ''; plus.disabled = true; refreshSuggestions(); });
+    } else {
+      openItemEditor({
+        mode: 'new', shopId,
+        seed: { id: cryptoUUID(), name: t, quantity: { amount: 1, unit: 'count' }, category: selectedCategory, photo: null, isChecked: false }
+      }).then(() => { inputName.value = ''; newName = ''; plus.disabled = true; refreshSuggestions(); });
+    }
+  }
+  inputName.addEventListener('keydown', (e) => { if (e.key === 'Enter') commit(); });
+  plus.onclick = commit;
+
+  const addbar = el('div', 'addbar');
+  addbar.append(inputName, catSel, plus);
+  wrap.appendChild(sugWrap);
+  wrap.appendChild(addbar);
+  return wrap;
+}
+
+function shopItemsList(shop) {
+  const list = el('div', 'group-list');
+  const unchecked = shop.items.filter(i => !i.isChecked);
+  const checked = shop.items.filter(i => i.isChecked);
+  const grouped = {};
+  for (const it of unchecked) {
+    const k = it.category || '__uncat__';
+    (grouped[k] ||= []).push(it);
+  }
+  const knownNames = new Set(state.shopCats.map(c => c.name));
+  const sections = [];
+  for (const cat of state.shopCats) if (grouped[cat.name]) sections.push({ title: cat.name, icon: SHOPPING_ICONS[cat.icon] || '', items: grouped[cat.name] });
+  for (const k of Object.keys(grouped)) {
+    if (k === '__uncat__' || knownNames.has(k)) continue;
+    sections.push({ title: k, icon: '', items: grouped[k] });
+  }
+  if (grouped['__uncat__']) sections.push({ title: UNCAT, icon: '', items: grouped['__uncat__'] });
+  if (checked.length > 0) sections.push({ title: 'Found', icon: '✅', items: checked });
+
+  for (const sec of sections) {
+    list.appendChild(el('div', 'section-title', sec.icon ? `${sec.icon} ${sec.title}` : sec.title));
+    const card = el('div', 'section-card');
+    for (const it of sec.items) card.appendChild(shopItemRow(shop, it));
+    list.appendChild(card);
+  }
+  return list;
+}
+
+function shopItemRow(shop, item) {
+  const row = el('div', 'row item-row');
+  if (item.isChecked) row.classList.add('checked');
+  const check = el('button', 'check' + (item.isChecked ? ' on' : ''), '✓');
+  check.onclick = (e) => { e.stopPropagation(); toggleItem(shop.id, item.id); };
+  row.appendChild(check);
+  if (item.photo) {
+    const thumb = el('div', 'thumb'); thumb.style.backgroundImage = `url(${dataURLFromBase64Jpeg(item.photo)})`;
+    thumb.onclick = (e) => { e.stopPropagation(); openPhotoViewer(item.photo); };
+    row.appendChild(thumb);
+  }
+  const name = el('div', 'name', item.name);
+  name.onclick = () => openItemEditor({ mode: 'edit', shopId: shop.id, seed: { ...item } });
+  row.appendChild(name);
+  row.appendChild(el('span', 'qty', quantityDisplay(item.quantity)));
+  row.appendChild(button('danger', '✕', (e) => { e.stopPropagation(); if (confirm(`Delete "${item.name}"?`)) deleteItem(shop.id, item.id); }));
+  return row;
+}
+
+function openItemEditor({ mode, shopId, seed }) {
+  return new Promise((resolve) => {
+    let name = seed.name, amount = seed.quantity.amount, unit = seed.quantity.unit;
+    let category = seed.category, photo = seed.photo;
+    const backdrop = el('div', 'modal-backdrop');
+    const m = el('div', 'modal');
+    const close = (r) => { backdrop.remove(); closeModal(); resolve(!!r); };
+
+    const nav = el('div', 'nav');
+    nav.append(button('', 'Cancel', () => close(false)), el('div', 'nav-title', mode === 'new' ? 'New Item' : 'Edit Item'),
+      button('', 'Save', save));
+    m.appendChild(nav);
+
+    const form = el('div', 'form');
+    const s1 = el('div', 'form-section'); s1.appendChild(el('h3', '', 'Name'));
+    const nIn = el('input'); nIn.type = 'text'; nIn.value = name;
+    nIn.addEventListener('input', () => name = nIn.value);
+    s1.appendChild(el('div', 'form-row', nIn));
+
+    const s2 = el('div', 'form-section'); s2.appendChild(el('h3', '', 'Quantity'));
+    const aIn = el('input'); aIn.type = 'number'; aIn.step = 'any'; aIn.value = amount;
+    aIn.addEventListener('input', () => amount = parseFloat(aIn.value));
+    const seg = el('div', 'seg');
+    ['count', 'gram', 'kilo'].forEach(u => {
+      const b = el('button', '', UNIT_SYMBOL[u]); if (u === unit) b.classList.add('on');
+      b.onclick = () => { unit = u; [...seg.children].forEach((bx, i) => bx.classList.toggle('on', ['count','gram','kilo'][i] === unit)); };
+      seg.appendChild(b);
+    });
+    s2.appendChild(el('div', 'form-row', aIn, seg));
+
+    const s3 = el('div', 'form-section'); s3.appendChild(el('h3', '', 'Category'));
+    const catSel = el('select');
+    const o0 = el('option', '', UNCAT); o0.value = ''; catSel.appendChild(o0);
+    state.shopCats.forEach(c => {
+      const o = el('option', '', `${SHOPPING_ICONS[c.icon] || '·'}  ${c.name}`); o.value = c.name; catSel.appendChild(o);
+    });
+    catSel.value = category || '';
+    catSel.onchange = () => category = catSel.value || null;
+    s3.appendChild(el('div', 'form-row', catSel));
+
+    const s4 = el('div', 'form-section'); s4.appendChild(el('h3', '', 'Photo'));
+    const pick = el('div', 'photo-pick');
+    const prev = el('div', 'preview', photo ? '' : '📷');
+    if (photo) prev.style.backgroundImage = `url(${dataURLFromBase64Jpeg(photo)})`;
+    const filePick = el('input'); filePick.type = 'file'; filePick.accept = 'image/*'; filePick.style.display = 'none';
+    filePick.onchange = async () => {
+      const f = filePick.files?.[0]; if (!f) return;
+      photo = await resizeImageToBase64(f);
+      prev.style.backgroundImage = `url(${dataURLFromBase64Jpeg(photo)})`; prev.textContent = ''; rm.style.display = 'inline';
+    };
+    const btnsCol = el('div'); btnsCol.style.display = 'flex'; btnsCol.style.flexDirection = 'column'; btnsCol.style.gap = '4px';
+    const pickBtn = button('link', photo ? 'Replace photo' : 'Pick photo', () => filePick.click());
+    const rm = button('danger', 'Remove', () => { photo = null; prev.style.backgroundImage = ''; prev.textContent = '📷'; rm.style.display = 'none'; pickBtn.textContent = 'Pick photo'; });
+    rm.style.display = photo ? 'inline' : 'none';
+    btnsCol.append(pickBtn, rm, filePick);
+    pick.append(prev, btnsCol);
+    s4.appendChild(pick);
+
+    form.append(s1, s2, s3, s4);
+    m.appendChild(form);
+
+    backdrop.appendChild(m);
+    backdrop.onclick = (e) => { if (e.target === backdrop) close(false); };
+    openModal(backdrop);
+
+    async function save() {
+      if (!name.trim() || !(amount > 0)) return;
+      const item = { id: seed.id, name: name.trim(), quantity: { amount, unit }, category, photo, isChecked: seed.isChecked || false };
+      if (mode === 'new') await addItem(shopId, item);
+      else await updateItem(shopId, item);
+      close(true);
+    }
+  });
+}
+
+function openPhotoViewer(b64) {
+  const backdrop = el('div', 'modal-backdrop'); backdrop.style.background = 'rgba(0,0,0,0.92)';
+  const img = el('img'); img.src = dataURLFromBase64Jpeg(b64);
+  img.style.maxWidth = '100%'; img.style.maxHeight = '100%'; img.style.objectFit = 'contain';
+  backdrop.appendChild(img);
+  backdrop.onclick = () => { backdrop.remove(); closeModal(); };
+  openModal(backdrop);
+}
+
+function openHistoryModal(shopId) {
+  const backdrop = el('div', 'modal-backdrop');
+  const m = el('div', 'modal'); m.style.height = '92vh';
+  let filter = 'all';
+  const close = () => { backdrop.remove(); closeModal(); };
+
+  const nav = el('div', 'nav');
+  nav.append(el('div', 'ghost'), el('div', 'nav-title', 'Previous Items'), button('', 'Done', close));
+  m.appendChild(nav);
+  const filterRow = el('div', 'hist-filter-row');
+  const grid = el('div', 'hist-grid');
+
+  function rebuild() {
+    const shop = shopById(shopId);
+    const addedNames = new Set((shop?.items || []).map(i => i.name.toLowerCase()));
+    const usedCats = new Set(state.history.map(h => h.category).filter(Boolean));
+    const hasUncat = state.history.some(h => !h.category);
+
+    filterRow.innerHTML = '';
+    state.shopCats.filter(c => usedCats.has(c.name)).forEach(c => {
+      const chip = el('button', 'hist-chip', SHOPPING_ICONS[c.icon] || c.name[0]);
+      if (filter === `cat:${c.name}`) chip.classList.add('on');
+      chip.onclick = () => { filter = filter === `cat:${c.name}` ? 'all' : `cat:${c.name}`; rebuild(); };
+      filterRow.appendChild(chip);
+    });
+    if (hasUncat) {
+      const chip = el('button', 'hist-chip', UNCAT);
+      if (filter === 'uncat') chip.classList.add('on');
+      chip.onclick = () => { filter = filter === 'uncat' ? 'all' : 'uncat'; rebuild(); };
+      filterRow.appendChild(chip);
+    }
+
+    grid.innerHTML = '';
+    let items = state.history;
+    if (filter.startsWith('cat:')) items = items.filter(h => h.category === filter.slice(4));
+    else if (filter === 'uncat') items = items.filter(h => !h.category);
+    if (!items.length) {
+      grid.appendChild(el('div', 'empty', el('div', 'e-icon', '📭'), el('div', '', 'Nothing here')));
+      return;
+    }
+    items.forEach(h => {
+      const added = addedNames.has(h.name.toLowerCase());
+      const cell = el('div', 'hist-cell ' + (added ? 'added' : 'available'));
+      cell.append(el('div', 'h-name', h.name), el('div', 'h-qty', quantityDisplay(h.quantity)));
+      if (!added) cell.onclick = async () => { await addFromPrevious(shopId, h); rebuild(); };
+      grid.appendChild(cell);
+    });
+  }
+
+  const scroll = el('div', 'scroll'); scroll.style.padding = '0';
+  scroll.append(filterRow, grid);
+  m.appendChild(scroll);
+  rebuild();
+  backdrop.appendChild(m);
+  backdrop.onclick = (e) => { if (e.target === backdrop) close(); };
+  openModal(backdrop);
+}
+
+// =====================================================================
+// BOOKS
+// =====================================================================
+function booksScreen() {
+  const wrap = el('div'); wrap.style.display = 'flex'; wrap.style.flexDirection = 'column'; wrap.style.flex = '1';
+  wrap.appendChild(navWith('Book Shelf', {
+    back: navBack,
+    right: el('div', '',
+      button('icon', state.showFavOnly ? '★' : '☆', () => { state.showFavOnly = !state.showFavOnly; render(); }),
+      button('icon', '＋', () => openAddBookModal()))
+  }));
+  const scroll = el('div', 'scroll');
   const filterRow = el('div', 'filter-row');
   STATUSES.forEach(status => {
     const pill = el('button', `pill ${status}${state.bookFilter === status ? ' active' : ''}`);
-    pill.append(
-      el('span', '', STATUS_LABEL[status]),
-      el('span', 'count', String(countFor(status, state.showFavOnly)))
-    );
-    pill.onclick = () => {
-      state.bookFilter = state.bookFilter === status ? null : status;
-      render();
-    };
+    pill.append(el('span', '', STATUS_LABEL[status]), el('span', 'count', String(countBooksFor(status, state.showFavOnly))));
+    pill.onclick = () => { state.bookFilter = state.bookFilter === status ? null : status; render(); };
     filterRow.appendChild(pill);
   });
   scroll.appendChild(filterRow);
-
-  // Sections
-  const sections = sectionsForRender();
+  const sections = bookSections();
   if (sections.length === 0) {
-    scroll.appendChild(el('div', 'empty',
-      el('div', 'e-icon', '📚'),
-      el('div', '', el('strong', '', state.showFavOnly ? 'No Favourites' : 'No Books')),
-      el('div', '', state.showFavOnly ? 'Tap a star to add favourites.' : 'Tap + to add one.')
-    ));
+    scroll.appendChild(el('div', 'empty', el('div', 'e-icon', '📚'), el('div', '', el('strong', '', state.showFavOnly ? 'No Favourites' : 'No Books')), el('div', '', state.showFavOnly ? 'Tap a star to add favourites.' : 'Tap + to add one.')));
   } else {
     const shelf = el('div', 'shelf');
     for (const sec of sections) {
@@ -776,35 +1636,23 @@ function booksScreen() {
     scroll.appendChild(shelf);
   }
   wrap.appendChild(scroll);
-
-  // Bottom: Main link only
-  const bottom = el('div', 'bottombar');
-  bottom.appendChild(button('', '🏠 Main', goMain));
-  wrap.appendChild(bottom);
+  wrap.appendChild(mainBottomBar());
   return wrap;
 }
-
 function coverElement(book, size = '') {
   const c = el('div', `cover ${size}`);
   c.style.background = placeholderColor(book.title || '');
   c.textContent = firstThreeWords(book.title || '');
   if (book.coverURL) {
     const img = new Image();
-    img.onload = () => {
-      c.textContent = '';
-      c.style.backgroundImage = `url(${book.coverURL})`;
-      c.style.backgroundColor = 'transparent';
-    };
-    img.onerror = () => { /* keep placeholder */ };
+    img.onload = () => { c.textContent = ''; c.style.backgroundImage = `url(${book.coverURL})`; c.style.backgroundColor = 'transparent'; };
     img.src = book.coverURL;
   }
   return c;
 }
-
 function bookCard(book) {
   const card = el('div', 'book-card');
   card.appendChild(coverElement(book));
-
   const info = el('div', 'book-info');
   const titleRow = el('div', '');
   const titleBtn = el('span', 'book-title', book.title);
@@ -813,289 +1661,744 @@ function bookCard(book) {
   if (book.publicationYear) titleRow.appendChild(el('span', 'book-year', `(${book.publicationYear})`));
   info.appendChild(titleRow);
   if (book.author) info.appendChild(el('div', 'book-author', book.author));
-
   const actions = el('div', 'book-actions');
-  // Status controls
   if (book.status === 'toFind' || book.status === 'toRead') {
-    for (const adv of ADVANCES[book.status]) {
-      const b = button(`btn advance ${adv.to}`, adv.label, () => setStatus(book, adv.to));
-      actions.appendChild(b);
-    }
-  } else if (book.status === 'read' || book.status === 'stopped') {
+    for (const adv of ADVANCES[book.status]) actions.appendChild(button(`btn advance ${adv.to}`, adv.label, () => setBookStatus(book, adv.to)));
+  } else {
     actions.appendChild(el('span', `date-pill ${book.status}`, ddMmYyyy(book.statusChangedAt)));
   }
-  // More toggle (only useful if author known)
   if (book.author) {
     const isOpen = state.expanded.has(book.id);
-    const m = button('btn more', isOpen ? 'Less ▲' : 'More… ▾', () => {
+    actions.appendChild(button('btn more', isOpen ? 'Less ▲' : 'More… ▾', () => {
       if (isOpen) state.expanded.delete(book.id); else state.expanded.add(book.id);
       render();
-    });
-    actions.appendChild(m);
+    }));
   }
   info.appendChild(actions);
   card.appendChild(info);
-
-  // Right column: ×, ★
   const side = el('div', 'book-side');
-  const del = button('icon-btn', '✕', () => {
-    if (confirm(`Delete "${book.title}"?`)) deleteBook(book);
-  });
-  side.appendChild(del);
+  side.appendChild(button('icon-btn', '✕', () => { if (confirm(`Delete "${book.title}"?`)) deleteBook(book); }));
   if (book.status === 'toRead' || book.status === 'read') {
-    const st = button('icon-btn star' + (book.isFavourite ? ' on' : ''), book.isFavourite ? '★' : '☆', () => toggleFavourite(book));
-    side.appendChild(st);
+    side.appendChild(button('icon-btn star' + (book.isFavourite ? ' on' : ''), book.isFavourite ? '★' : '☆', () => toggleBookFavourite(book)));
   }
   card.appendChild(side);
-
-  // More panel content (rendered below the card row)
   if (state.expanded.has(book.id) && book.author) {
-    const panel = el('div', 'more-panel');
-    panel.style.flexBasis = '100%';
+    const panel = el('div', 'more-panel'); panel.style.flexBasis = '100%';
     renderMorePanel(panel, book);
     card.style.flexWrap = 'wrap';
     card.appendChild(panel);
   }
   return card;
 }
-
 async function renderMorePanel(panel, book) {
-  let results = olAuthorBookCache.get(book.author.toLowerCase().trim());
-  if (results) {
-    drawMorePanel(panel, book, filterAuthorBooks(results));
-    return;
-  }
+  let cached = olAuthorBookCache.get(book.author.toLowerCase().trim());
+  if (cached) { drawMorePanel(panel, book, filterAuthorBooks(cached)); return; }
   panel.appendChild(el('div', 'more-loading', `Loading other books by ${book.author}…`));
   const list = await olFetchAuthorBooks(book.author);
   panel.innerHTML = '';
   drawMorePanel(panel, book, filterAuthorBooks(list));
 }
-
 function drawMorePanel(panel, book, list) {
-  if (list.length === 0) {
-    panel.appendChild(el('div', 'more-loading', 'No other books found.'));
-    return;
-  }
+  if (!list.length) { panel.appendChild(el('div', 'more-loading', 'No other books found.')); return; }
   for (const r of list) {
     const row = el('div', 'more-row');
     row.appendChild(coverElement({ title: r.title, coverURL: r.coverURL }, 'sm'));
-    const info = el('div', '');
-    info.style.flex = '1'; info.style.minWidth = '0';
-    info.append(
-      el('div', '', r.title),
-      r.first_publish_year ? el('div', 'book-author', String(r.first_publish_year)) : null
-    );
+    const info = el('div', ''); info.style.flex = '1'; info.style.minWidth = '0';
+    info.append(el('div', '', r.title), r.first_publish_year ? el('div', 'book-author', String(r.first_publish_year)) : null);
     row.appendChild(info);
     const addBtn = el('span', 'add', '+ Add');
     addBtn.onclick = async () => {
-      await addBook({
-        title: r.title,
-        author: book.author,
-        publicationYear: r.first_publish_year || null,
-        coverURL: r.coverURL || null
-      });
+      await addBook({ title: r.title, author: book.author, publicationYear: r.first_publish_year || null, coverURL: r.coverURL || null });
     };
     row.appendChild(addBtn);
     panel.appendChild(row);
   }
 }
 
-// ---- Add Book modal ----
 function openAddBookModal() {
-  let author = '', title = '';
-  let selectedAuthor = null;
-  let authorOLResults = [];
-  let prefetchedBooks = [];
-
+  let author = '', title = '', selectedAuthor = null;
+  let authorOL = [], prefetched = [];
   const backdrop = el('div', 'modal-backdrop');
   const m = el('div', 'modal');
+  const close = () => { backdrop.remove(); closeModal(); };
 
-  const nav = el('div', 'nav'); nav.style.position = 'relative';
-  nav.append(
-    button('', 'Cancel', () => { backdrop.remove(); closeModal(); }),
-    el('div', 'nav-title', 'Add Book'),
-    el('div', 'ghost')
-  );
+  const nav = el('div', 'nav');
+  nav.append(button('', 'Cancel', close), el('div', 'nav-title', 'Add Book'), el('div', 'ghost'));
   m.appendChild(nav);
 
-  const fieldPair = el('div', 'field-pair');
-  const authorInput = el('input'); authorInput.type = 'text'; authorInput.placeholder = 'Author';
-  const titleInput = el('input'); titleInput.type = 'text'; titleInput.placeholder = 'Title';
-  fieldPair.append(authorInput, titleInput);
+  const fieldPair = el('div', 'form-row');
+  const aIn = el('input'); aIn.type = 'text'; aIn.placeholder = 'Author';
+  const tIn = el('input'); tIn.type = 'text'; tIn.placeholder = 'Title';
+  fieldPair.append(aIn, tIn);
   m.appendChild(fieldPair);
+  m.appendChild(el('div', 'helper-tip', 'Type an author, pick one, then a title.'));
+  const dd = el('div', 'dropdown'); m.appendChild(dd);
 
-  const tip = el('div', 'helper-tip', 'Type an author to search Open Library, pick one, then a title.');
-  m.appendChild(tip);
-
-  const dd = el('div', 'dropdown');
-  m.appendChild(dd);
-
-  const debouncedAuthorSearch = debounce(async (q) => {
-    if (q.trim().length < 2) { authorOLResults = []; renderDropdown(); return; }
-    const known = state.books.find(b => b.author.toLowerCase() === q.trim().toLowerCase());
-    if (known) {
-      // No new search needed, but we'll still show the OL author search for breadth.
-    }
-    const ol = await olSearchAuthors(q.trim());
-    authorOLResults = ol;
-    renderDropdown();
+  const debSearch = debounce(async (q) => {
+    if (q.trim().length < 2) { authorOL = []; renderDD(); return; }
+    authorOL = await olSearchAuthors(q.trim());
+    renderDD();
   }, 400);
-
-  authorInput.addEventListener('input', () => {
-    author = authorInput.value;
+  aIn.addEventListener('input', () => {
+    author = aIn.value;
     if (selectedAuthor && author.trim().toLowerCase() !== selectedAuthor.toLowerCase()) {
-      selectedAuthor = null; prefetchedBooks = [];
+      selectedAuthor = null; prefetched = [];
     }
-    debouncedAuthorSearch(author);
-    renderDropdown();
+    debSearch(author); renderDD();
   });
-  titleInput.addEventListener('input', () => { title = titleInput.value; renderDropdown(); });
-  titleInput.addEventListener('focus', () => { renderDropdown(); });
-  authorInput.addEventListener('focus', () => { renderDropdown(); });
+  tIn.addEventListener('input', () => { title = tIn.value; renderDD(); });
+  tIn.addEventListener('focus', renderDD);
+  aIn.addEventListener('focus', renderDD);
 
   async function selectAuthor(name) {
-    selectedAuthor = name;
-    authorInput.value = name;
-    author = name;
-    titleInput.focus();
+    selectedAuthor = name; aIn.value = name; author = name; tIn.focus();
     const list = olAuthorBookCache.get(name.toLowerCase().trim()) || await olFetchAuthorBooks(name);
-    prefetchedBooks = filterAuthorBooks(list);
-    renderDropdown();
+    prefetched = filterAuthorBooks(list);
+    renderDD();
   }
-
-  function renderDropdown() {
+  function renderDD() {
     dd.innerHTML = '';
-    const active = document.activeElement === titleInput ? 'title' : 'author';
+    const active = document.activeElement === tIn ? 'title' : 'author';
     if (active === 'author' || !selectedAuthor) {
-      // Show author suggestions (library + OL)
-      const libraryAuthors = [...new Set(state.books.map(b => b.author).filter(Boolean))]
-        .filter(a => a.toLowerCase().includes(author.trim().toLowerCase()))
-        .slice(0, 5);
+      const libAuth = [...new Set(state.books.map(b => b.author).filter(Boolean))]
+        .filter(a => a.toLowerCase().includes(author.trim().toLowerCase())).slice(0, 5);
       const seen = new Set();
-      for (const a of libraryAuthors) {
+      for (const a of libAuth) {
         seen.add(a.toLowerCase());
         const row = el('div', 'dd-row tap');
         row.append(el('span', 'src', '📚'), el('span', 'name', a));
         row.onclick = () => selectAuthor(a);
         dd.appendChild(row);
       }
-      for (const a of authorOLResults) {
+      for (const a of authorOL) {
         if (seen.has(a.name.toLowerCase())) continue;
         const row = el('div', 'dd-row tap');
-        row.append(
-          el('span', 'src', '🔍'),
-          el('span', 'name', a.name),
-          a.work_count ? el('span', 'meta', `· ${a.work_count} works`) : null
-        );
+        row.append(el('span', 'src', '🔍'), el('span', 'name', a.name), a.work_count ? el('span', 'meta', `· ${a.work_count} works`) : null);
         row.onclick = () => selectAuthor(a.name);
         dd.appendChild(row);
       }
-    } else if (active === 'title' && selectedAuthor) {
+    } else {
       const q = title.trim().toLowerCase();
-      let books = prefetchedBooks;
-      if (q) books = books.filter(b => (b.title || '').toLowerCase().includes(q));
-      books = books.slice(0, 20);
-      if (books.length === 0) {
-        dd.appendChild(el('div', 'more-loading', 'No matching titles.'));
-      }
-      for (const b of books) {
+      let list = q ? prefetched.filter(b => (b.title || '').toLowerCase().includes(q)) : prefetched;
+      list = list.slice(0, 20);
+      if (!list.length) dd.appendChild(el('div', 'more-loading', 'No matching titles.'));
+      for (const b of list) {
         const row = el('div', 'dd-row tap');
-        row.append(
-          coverElement({ title: b.title, coverURL: b.coverURL }, 'sm'),
+        row.append(coverElement({ title: b.title, coverURL: b.coverURL }, 'sm'),
           el('span', 'name', b.title),
           b.first_publish_year ? el('span', 'meta', String(b.first_publish_year)) : null,
-          el('span', 'plus', '+')
-        );
+          el('span', 'plus', '+'));
         row.onclick = async () => {
-          await addBook({
-            title: b.title, author: selectedAuthor,
-            publicationYear: b.first_publish_year || null,
-            coverURL: b.coverURL || null
-          });
-          backdrop.remove(); closeModal();
+          await addBook({ title: b.title, author: selectedAuthor, publicationYear: b.first_publish_year || null, coverURL: b.coverURL || null });
+          close();
         };
         dd.appendChild(row);
       }
     }
   }
-  renderDropdown();
+  renderDD();
 
   backdrop.appendChild(m);
-  backdrop.onclick = (e) => { if (e.target === backdrop) { backdrop.remove(); closeModal(); } };
+  backdrop.onclick = (e) => { if (e.target === backdrop) close(); };
   openModal(backdrop);
-  setTimeout(() => authorInput.focus(), 0);
+  setTimeout(() => aIn.focus(), 0);
 }
 
-// ---- Edit Book modal ----
 function openEditBookModal(book) {
   const draft = {
-    title: book.title, author: book.author,
-    publicationYear: book.publicationYear,
+    title: book.title, author: book.author, publicationYear: book.publicationYear,
     status: book.status, isFavourite: book.isFavourite, coverURL: book.coverURL
   };
   const backdrop = el('div', 'modal-backdrop');
   const m = el('div', 'modal');
+  const close = () => { backdrop.remove(); closeModal(); };
 
-  const nav = el('div', 'nav'); nav.style.position = 'relative';
-  nav.append(
-    button('', 'Cancel', () => { backdrop.remove(); closeModal(); }),
-    el('div', 'nav-title', 'Edit Book'),
-    button('', 'Save', async () => {
-      if (!draft.title.trim()) return;
-      await updateBook(book, draft);
-      backdrop.remove(); closeModal();
-    })
-  );
+  const nav = el('div', 'nav');
+  nav.append(button('', 'Cancel', close), el('div', 'nav-title', 'Edit Book'),
+    button('', 'Save', async () => { if (!draft.title.trim()) return; await updateBook(book, draft); close(); }));
   m.appendChild(nav);
-
   const form = el('div', 'form');
 
-  const sBook = el('div', 'form-section');
-  sBook.appendChild(el('h3', '', 'Book'));
-  const titleIn = el('input'); titleIn.type = 'text'; titleIn.value = draft.title; titleIn.placeholder = 'Title';
-  titleIn.addEventListener('input', () => draft.title = titleIn.value);
-  const authIn = el('input'); authIn.type = 'text'; authIn.value = draft.author; authIn.placeholder = 'Author';
-  authIn.addEventListener('input', () => draft.author = authIn.value);
-  const yearIn = el('input'); yearIn.type = 'number'; yearIn.value = draft.publicationYear || ''; yearIn.placeholder = 'Year';
-  yearIn.addEventListener('input', () => draft.publicationYear = parseInt(yearIn.value) || null);
-  sBook.appendChild(el('div', 'form-row', titleIn));
-  sBook.appendChild(el('div', 'form-row', authIn));
-  sBook.appendChild(el('div', 'form-row', yearIn));
-  form.appendChild(sBook);
+  const sb = el('div', 'form-section'); sb.appendChild(el('h3', '', 'Book'));
+  const ti = el('input'); ti.type = 'text'; ti.value = draft.title; ti.placeholder = 'Title';
+  ti.addEventListener('input', () => draft.title = ti.value);
+  const ai = el('input'); ai.type = 'text'; ai.value = draft.author; ai.placeholder = 'Author';
+  ai.addEventListener('input', () => draft.author = ai.value);
+  const yi = el('input'); yi.type = 'number'; yi.value = draft.publicationYear || ''; yi.placeholder = 'Year';
+  yi.addEventListener('input', () => draft.publicationYear = parseInt(yi.value) || null);
+  sb.appendChild(el('div', 'form-row', ti));
+  sb.appendChild(el('div', 'form-row', ai));
+  sb.appendChild(el('div', 'form-row', yi));
+  form.appendChild(sb);
 
-  // Status + Favourite
-  const sStatus = el('div', 'form-section');
-  sStatus.appendChild(el('h3', '', 'Status'));
-  const seg = el('div', 'seg picker-row');
+  const ss = el('div', 'form-section'); ss.appendChild(el('h3', '', 'Status'));
+  const seg = el('div', 'seg'); seg.style.padding = '8px 12px';
   STATUSES.forEach(s => {
     const b = el('button', '', STATUS_LABEL[s]);
     if (s === draft.status) b.classList.add('on');
     b.onclick = () => { draft.status = s; [...seg.children].forEach(c => c.classList.remove('on')); b.classList.add('on'); };
     seg.appendChild(b);
   });
-  sStatus.appendChild(seg);
-  // Favourite toggle
+  ss.appendChild(seg);
   const favRow = el('div', 'toggle-row');
   favRow.append(el('span', '', 'Favourite'));
   const sw = el('div', 'switch' + (draft.isFavourite ? ' on' : ''));
   sw.onclick = () => { draft.isFavourite = !draft.isFavourite; sw.classList.toggle('on'); };
-  favRow.appendChild(sw);
-  sStatus.appendChild(favRow);
-  form.appendChild(sStatus);
+  favRow.appendChild(sw); ss.appendChild(favRow);
+  form.appendChild(ss);
 
-  // Dates (read-only)
-  const sDates = el('div', 'form-section');
-  sDates.appendChild(el('h3', '', 'Dates'));
-  const added = el('div', 'dates-row');
-  added.append(el('span', '', 'Added'), el('span', '', ddMmYyyy(book.addedAt)));
-  const modified = el('div', 'dates-row');
-  modified.append(el('span', '', 'Modified'), el('span', '', ddMmYyyy(book.statusChangedAt)));
-  sDates.append(added, modified);
-  form.appendChild(sDates);
+  const sd = el('div', 'form-section'); sd.appendChild(el('h3', '', 'Dates'));
+  const a = el('div', 'dates-row'); a.append(el('span', '', 'Added'), el('span', '', ddMmYyyy(book.addedAt)));
+  const md = el('div', 'dates-row'); md.append(el('span', '', 'Modified'), el('span', '', ddMmYyyy(book.statusChangedAt)));
+  sd.append(a, md); form.appendChild(sd);
 
   m.appendChild(form);
   backdrop.appendChild(m);
-  backdrop.onclick = (e) => { if (e.target === backdrop) { backdrop.remove(); closeModal(); } };
+  backdrop.onclick = (e) => { if (e.target === backdrop) close(); };
+  openModal(backdrop);
+}
+
+// =====================================================================
+// EXPENSES
+// =====================================================================
+function expensesScreen() {
+  const wrap = el('div'); wrap.style.display = 'flex'; wrap.style.flexDirection = 'column'; wrap.style.flex = '1';
+  wrap.appendChild(navWith('Expenses', {
+    back: navBack,
+    right: button('icon', '＋', openExpenseEditorNew)
+  }));
+  const scroll = el('div', 'scroll');
+  const totalC = expenseTotalFor('c'), totalM = expenseTotalFor('m'), bal = totalC - totalM;
+  const summary = el('div', 'summary-row');
+  const pillC = el('button', `sum-pill c${state.expenseFilter === 'c' ? ' on' : ''}`);
+  pillC.append(el('span', '', 'C'), el('span', '', formatEuros(totalC)));
+  pillC.onclick = () => { state.expenseFilter = state.expenseFilter === 'c' ? null : 'c'; render(); };
+  const pillM = el('button', `sum-pill m${state.expenseFilter === 'm' ? ' on' : ''}`);
+  pillM.append(el('span', '', 'M'), el('span', '', formatEuros(totalM)));
+  pillM.onclick = () => { state.expenseFilter = state.expenseFilter === 'm' ? null : 'm'; render(); };
+  const balCls = bal > 0.001 ? ' pos' : (bal < -0.001 ? ' neg' : '');
+  const pillBal = el('span', `sum-pill bal${balCls}`);
+  pillBal.append(el('span', '', 'Bal.'), el('span', '', formatEuros(bal)));
+  summary.append(pillC, pillM, pillBal);
+  scroll.appendChild(summary);
+
+  let list = state.expenses;
+  if (state.expenseFilter) list = list.filter(e => e.owner === state.expenseFilter);
+  if (!list.length) {
+    scroll.appendChild(el('div', 'empty', el('div', 'e-icon', '💳'), el('div', '', el('strong', '', 'No Expenses')), el('div', '', 'Tap + to add one.')));
+  } else {
+    const card = el('div', 'section-card'); card.style.margin = '0 12px';
+    list.forEach(e => {
+      const row = el('div', 'expense-row');
+      row.append(
+        el('div', `owner-badge ${e.owner}`, e.owner.toUpperCase()),
+        (() => { const t = el('div', 'expense-title', e.title); t.onclick = () => openExpenseEditorEdit(e); return t; })(),
+        el('div', `expense-amount ${e.owner}`, formatEuros(e.amount)),
+        el('div', 'expense-date', ddMmYyyy(e.createdAt)),
+        button('danger', '✕', (ev) => { ev.stopPropagation(); if (confirm(`Delete "${e.title}"?`)) deleteExpense(e); })
+      );
+      card.appendChild(row);
+    });
+    scroll.appendChild(card);
+  }
+  wrap.appendChild(scroll);
+  wrap.appendChild(mainBottomBar());
+  return wrap;
+}
+
+function openExpenseEditorNew() { openExpenseEditor({ mode: 'new' }); }
+function openExpenseEditorEdit(e) { openExpenseEditor({ mode: 'edit', original: e }); }
+
+function openExpenseEditor({ mode, original }) {
+  let title = mode === 'edit' ? original.title : '';
+  let amountStr = mode === 'edit' ? String(original.amount.toFixed(2)) : '';
+  let owner = mode === 'edit' ? original.owner : 'c';
+  let createdAt = mode === 'edit' ? original.createdAt : new Date().toISOString();
+
+  const backdrop = el('div', 'modal-backdrop');
+  const m = el('div', 'modal');
+  const close = () => { backdrop.remove(); closeModal(); };
+
+  function parsedAmount() { const v = parseFloat((amountStr || '').replace(',', '.')); return v > 0 ? v : null; }
+  function isValid() { return title.trim() && parsedAmount() != null; }
+
+  const nav = el('div', 'nav');
+  nav.append(button('', 'Cancel', close), el('div', 'nav-title', mode === 'new' ? 'New Expense' : 'Edit Expense'),
+    button('', 'Save', async () => {
+      if (!isValid()) return;
+      const amt = parsedAmount();
+      if (mode === 'new') await addExpense(title, amt, owner);
+      else await updateExpense(original, { title, amount: amt, owner, createdAt });
+      close();
+    }));
+  m.appendChild(nav);
+
+  const form = el('div', 'form');
+  const sT = el('div', 'form-section'); sT.appendChild(el('h3', '', 'Title'));
+  const tIn = el('input'); tIn.type = 'text'; tIn.value = title; tIn.placeholder = 'Title';
+  tIn.addEventListener('input', () => { title = tIn.value; if (mode === 'new') renderSuggs(); });
+  sT.appendChild(el('div', 'form-row', tIn));
+  const suggBox = el('div'); suggBox.style.padding = '0 8px';
+  if (mode === 'new') sT.appendChild(suggBox);
+  function renderSuggs() {
+    suggBox.innerHTML = '';
+    if (mode !== 'new') return;
+    const s = expenseSuggestions(title);
+    if (!s.length) return;
+    s.forEach(sg => {
+      const row = el('div', 'dd-row tap');
+      row.append(el('div', `owner-badge ${sg.owner}`, sg.owner.toUpperCase()), el('span', 'name', sg.title));
+      row.onclick = () => { title = sg.title; owner = sg.owner; tIn.value = sg.title; refreshOwnerBtns(); renderSuggs(); };
+      suggBox.appendChild(row);
+    });
+  }
+  form.appendChild(sT);
+
+  const sA = el('div', 'form-section'); sA.appendChild(el('h3', '', 'Amount'));
+  const aIn = el('input'); aIn.type = 'text'; aIn.inputMode = 'decimal'; aIn.placeholder = '€ Amount'; aIn.value = amountStr;
+  aIn.addEventListener('input', () => amountStr = aIn.value);
+  const seg = el('div', 'seg');
+  const cBtn = el('button', `c${owner === 'c' ? ' on' : ''}`, 'C');
+  const mBtn = el('button', `m${owner === 'm' ? ' on' : ''}`, 'M');
+  function refreshOwnerBtns() {
+    cBtn.classList.toggle('on', owner === 'c'); mBtn.classList.toggle('on', owner === 'm');
+  }
+  cBtn.onclick = () => { owner = 'c'; refreshOwnerBtns(); };
+  mBtn.onclick = () => { owner = 'm'; refreshOwnerBtns(); };
+  seg.append(cBtn, mBtn);
+  sA.appendChild(el('div', 'form-row', aIn, seg));
+  form.appendChild(sA);
+
+  if (mode === 'edit') {
+    const sD = el('div', 'form-section'); sD.appendChild(el('h3', '', 'Date'));
+    const dIn = el('input'); dIn.type = 'date';
+    dIn.value = createdAt.slice(0, 10);
+    dIn.addEventListener('input', () => { const d = new Date(dIn.value + 'T12:00:00'); if (!isNaN(d.getTime())) createdAt = d.toISOString(); });
+    sD.appendChild(el('div', 'form-row', dIn));
+    form.appendChild(sD);
+  }
+  m.appendChild(form);
+  backdrop.appendChild(m);
+  backdrop.onclick = (e) => { if (e.target === backdrop) close(); };
+  openModal(backdrop);
+}
+
+// =====================================================================
+// TRAVEL
+// =====================================================================
+function travelHomeScreen() {
+  const wrap = el('div'); wrap.style.display = 'flex'; wrap.style.flexDirection = 'column'; wrap.style.flex = '1';
+  wrap.appendChild(navWith('Travel', {
+    back: navBack,
+    right: button('icon', '＋', openNewTravelMenu)
+  }));
+  const scroll = el('div', 'scroll');
+  if (state.trips.length === 0 && state.templates.length === 0) {
+    scroll.appendChild(el('div', 'empty', el('div', 'e-icon', '🧳'), el('div', '', el('strong', '', 'Nothing Yet')), el('div', '', 'Tap + to start a trip or template.')));
+  } else {
+    const list = el('div', 'group-list');
+    if (state.trips.length) {
+      list.appendChild(el('div', 'section-title', 'TRIPS'));
+      const card = el('div', 'section-card');
+      state.trips.forEach(trip => {
+        const row = el('div', 'trip-row');
+        row.onclick = () => navTo({ v: 'trip', id: trip.id });
+        const cLeft = trip.items.filter(i => !i.packedByC).length;
+        const mLeft = trip.items.filter(i => !i.packedByM).length;
+        const meta = el('div', '');
+        meta.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;margin-top:4px';
+        meta.append(
+          el('span', 'muted', `${trip.items.length} items`),
+          el('span', `pill-mini ${cLeft === 0 ? 'muted' : 'c'}`, `C ${cLeft}`),
+          el('span', `pill-mini ${mLeft === 0 ? 'muted' : 'm'}`, `M ${mLeft}`)
+        );
+        row.append(
+          el('div', 'trip-icon', '🧳'),
+          el('div', 'grow', el('div', '', trip.name), meta),
+          button('danger', '✕', (e) => { e.stopPropagation(); if (confirm(`Delete "${trip.name}"?`)) deleteTrip(trip.id); }),
+          el('div', 'chev', '›')
+        );
+        card.appendChild(row);
+      });
+      list.appendChild(card);
+    }
+    if (state.templates.length) {
+      list.appendChild(el('div', 'section-title', 'TEMPLATES'));
+      const card = el('div', 'section-card');
+      state.templates.forEach(tmpl => {
+        const row = el('div', 'trip-row');
+        row.onclick = () => navTo({ v: 'template', id: tmpl.id });
+        row.append(
+          el('div', 'trip-icon', '📄'),
+          el('div', 'grow',
+            el('div', '', tmpl.name),
+            el('div', 'muted', `${tmpl.items.length} item${tmpl.items.length === 1 ? '' : 's'}`)
+          ),
+          button('danger', '✕', (e) => { e.stopPropagation(); if (confirm(`Delete "${tmpl.name}"?`)) deleteTemplate(tmpl.id); }),
+          el('div', 'chev', '›')
+        );
+        card.appendChild(row);
+      });
+      list.appendChild(card);
+    }
+    scroll.appendChild(list);
+  }
+  wrap.appendChild(scroll);
+  wrap.appendChild(mainBottomBar());
+  return wrap;
+}
+
+function openNewTravelMenu() {
+  const backdrop = el('div', 'modal-backdrop');
+  const m = el('div', 'modal');
+  const close = () => { backdrop.remove(); closeModal(); };
+  const nav = el('div', 'nav');
+  nav.append(el('div', 'ghost'), el('div', 'nav-title', 'New'), button('', 'Cancel', close));
+  m.appendChild(nav);
+  const form = el('div', 'form');
+  const c1 = el('div', 'form-section');
+  const r1 = el('div', 'form-row');
+  r1.appendChild(button('link', '🧳 New Trip', () => { close(); openNewTripModal(); }));
+  c1.appendChild(r1);
+  const r2 = el('div', 'form-row');
+  r2.appendChild(button('link', '📄 New Template', () => { close(); openNewTemplateModal(); }));
+  c1.appendChild(r2);
+  form.appendChild(c1);
+  m.appendChild(form);
+  backdrop.appendChild(m);
+  backdrop.onclick = (e) => { if (e.target === backdrop) close(); };
+  openModal(backdrop);
+}
+
+function openNewTripModal() {
+  let name = '', selectedTemplateId = null;
+  const backdrop = el('div', 'modal-backdrop');
+  const m = el('div', 'modal');
+  const close = () => { backdrop.remove(); closeModal(); };
+  const nav = el('div', 'nav');
+  nav.append(button('', 'Cancel', close), el('div', 'nav-title', 'New Trip'),
+    button('', 'Save', async () => {
+      if (!name.trim()) return;
+      const tmpl = selectedTemplateId ? templateById(selectedTemplateId) : null;
+      await addTrip(name, tmpl); close();
+    }));
+  m.appendChild(nav);
+  const form = el('div', 'form');
+  const s1 = el('div', 'form-section'); s1.appendChild(el('h3', '', 'Name'));
+  const nIn = el('input'); nIn.type = 'text'; nIn.addEventListener('input', () => name = nIn.value);
+  s1.appendChild(el('div', 'form-row', nIn));
+  form.appendChild(s1);
+  const s2 = el('div', 'form-section'); s2.appendChild(el('h3', '', 'Start From'));
+  const list = el('div');
+  function rebuild() {
+    list.innerHTML = '';
+    const opts = [{ id: null, name: 'Blank list', count: '' }, ...state.templates.map(t => ({ id: t.id, name: t.name, count: `${t.items.length} items` }))];
+    opts.forEach(o => {
+      const row = el('div', 'form-row');
+      row.style.cursor = 'pointer';
+      row.onclick = () => { selectedTemplateId = o.id; rebuild(); };
+      row.append(
+        el('span', '', o.id ? '📄' : '📋'),
+        el('div', 'grow', o.name),
+        o.count ? el('span', 'muted', o.count) : null,
+        selectedTemplateId === o.id ? el('span', 'link', '✓') : null
+      );
+      list.appendChild(row);
+    });
+  }
+  rebuild();
+  s2.appendChild(list);
+  form.appendChild(s2);
+  m.appendChild(form);
+  backdrop.appendChild(m);
+  backdrop.onclick = (e) => { if (e.target === backdrop) close(); };
+  openModal(backdrop);
+}
+
+function openNewTemplateModal() {
+  let name = '';
+  const backdrop = el('div', 'modal-backdrop');
+  const m = el('div', 'modal');
+  const close = () => { backdrop.remove(); closeModal(); };
+  const nav = el('div', 'nav');
+  nav.append(button('', 'Cancel', close), el('div', 'nav-title', 'New Template'),
+    button('', 'Save', async () => { if (!name.trim()) return; await addTemplate(name); close(); }));
+  m.appendChild(nav);
+  const form = el('div', 'form');
+  const s1 = el('div', 'form-section'); s1.appendChild(el('h3', '', 'Name'));
+  const nIn = el('input'); nIn.type = 'text'; nIn.addEventListener('input', () => name = nIn.value);
+  s1.appendChild(el('div', 'form-row', nIn));
+  form.appendChild(s1);
+  m.appendChild(form);
+  backdrop.appendChild(m);
+  backdrop.onclick = (e) => { if (e.target === backdrop) close(); };
+  openModal(backdrop);
+}
+
+function tripDetailScreen(tripId) {
+  const wrap = el('div'); wrap.style.display = 'flex'; wrap.style.flexDirection = 'column'; wrap.style.flex = '1';
+  const trip = tripById(tripId);
+  wrap.appendChild(navWith(trip ? trip.name : 'Trip', {
+    back: navBack,
+    right: button('icon', '✎', () => {
+      const n = prompt('Rename trip:', trip?.name || ''); if (n) renameTrip(tripId, n);
+    })
+  }));
+
+  // Filter pills (packing) and category filter row
+  let packingFilter = null; // 'c' | 'm' | 'open'
+  let catFilter = 'all'; // 'all' | `cat:name` | 'uncat'
+
+  const scroll = el('div', 'scroll');
+  const packingRow = el('div', 'filter-row');
+  function rebuildPacking() {
+    packingRow.innerHTML = '';
+    if (!trip) return;
+    const cLeft = trip.items.filter(i => !i.packedByC).length;
+    const mLeft = trip.items.filter(i => !i.packedByM).length;
+    const open = trip.items.filter(i => !i.packedByC || !i.packedByM).length;
+    function pill(klass, content, key) {
+      const b = el('button', `travel-pill ${klass}${packingFilter === key ? ' on' : ''}`);
+      content.forEach(c => b.appendChild(typeof c === 'string' ? document.createTextNode(c) : c));
+      b.onclick = () => { packingFilter = packingFilter === key ? null : key; rebuildPacking(); rebuildList(); };
+      return b;
+    }
+    packingRow.appendChild(pill('c', [el('strong', '', 'C'), ` ${cLeft} left`], 'c'));
+    packingRow.appendChild(pill('m', [el('strong', '', 'M'), ` ${mLeft} left`], 'm'));
+    packingRow.appendChild(pill('open', [`◌ ${open} open`], 'open'));
+  }
+  rebuildPacking();
+  scroll.appendChild(packingRow);
+
+  const catRow = el('div', 'hist-filter-row');
+  function rebuildCatRow() {
+    catRow.innerHTML = '';
+    if (!trip) return;
+    const used = new Set(trip.items.map(i => i.category).filter(Boolean));
+    const hasUncat = trip.items.some(i => !i.category);
+    state.travelCats.filter(c => used.has(c.name)).forEach(c => {
+      const chip = el('button', 'hist-chip', TRAVEL_ICONS[c.icon] || c.name[0]);
+      if (catFilter === `cat:${c.name}`) chip.classList.add('on');
+      chip.onclick = () => { catFilter = catFilter === `cat:${c.name}` ? 'all' : `cat:${c.name}`; rebuildCatRow(); rebuildList(); };
+      catRow.appendChild(chip);
+    });
+    if (hasUncat) {
+      const chip = el('button', 'hist-chip', UNCAT);
+      if (catFilter === 'uncat') chip.classList.add('on');
+      chip.onclick = () => { catFilter = catFilter === 'uncat' ? 'all' : 'uncat'; rebuildCatRow(); rebuildList(); };
+      catRow.appendChild(chip);
+    }
+  }
+  rebuildCatRow();
+  scroll.appendChild(catRow);
+
+  const listWrap = el('div');
+  function applyFilters(items) {
+    let out = items;
+    if (packingFilter === 'c') out = out.filter(i => !i.packedByC);
+    else if (packingFilter === 'm') out = out.filter(i => !i.packedByM);
+    else if (packingFilter === 'open') out = out.filter(i => !i.packedByC || !i.packedByM);
+    if (catFilter.startsWith('cat:')) out = out.filter(i => i.category === catFilter.slice(4));
+    else if (catFilter === 'uncat') out = out.filter(i => !i.category);
+    return out;
+  }
+  function rebuildList() {
+    listWrap.innerHTML = '';
+    if (!trip) return;
+    const items = applyFilters(trip.items);
+    if (items.length === 0) {
+      listWrap.appendChild(el('div', 'empty', el('div', 'e-icon', trip.items.length ? '✓' : '🧳'),
+        el('div', '', el('strong', '', trip.items.length ? 'Nothing Here' : 'Empty List'))));
+      return;
+    }
+    const sections = travelSections(items);
+    const groupList = el('div', 'group-list');
+    sections.forEach(sec => {
+      groupList.appendChild(el('div', 'section-title', sec.icon ? `${sec.icon} ${sec.title}` : sec.title));
+      const card = el('div', 'section-card');
+      sec.items.forEach(it => card.appendChild(tripItemRow(trip, it, rebuildPacking, rebuildCatRow, rebuildList)));
+      groupList.appendChild(card);
+    });
+    listWrap.appendChild(groupList);
+  }
+  rebuildList();
+  scroll.appendChild(listWrap);
+  wrap.appendChild(scroll);
+
+  // Add bar
+  let newName = '', selCat = null;
+  const inputName = el('input', 'name'); inputName.type = 'text'; inputName.placeholder = 'New item';
+  inputName.addEventListener('input', () => { newName = inputName.value; plus.disabled = !newName.trim(); });
+  const catSel = el('select');
+  const o0 = el('option', '', UNCAT); o0.value = ''; catSel.appendChild(o0);
+  state.travelCats.forEach(c => {
+    const o = el('option', '', `${TRAVEL_ICONS[c.icon] || '·'}  ${c.name}`); o.value = c.name; catSel.appendChild(o);
+  });
+  catSel.onchange = () => selCat = catSel.value || null;
+  const plus = el('button', 'plus', '＋'); plus.disabled = true;
+  function commit() {
+    const t = newName.trim(); if (!t) return;
+    addTripItem(tripId, { id: cryptoUUID(), name: t, category: selCat, packedByC: false, packedByM: false })
+      .then(() => { inputName.value = ''; newName = ''; plus.disabled = true; });
+  }
+  inputName.addEventListener('keydown', (e) => { if (e.key === 'Enter') commit(); });
+  plus.onclick = commit;
+  const addbar = el('div', 'addbar');
+  addbar.append(inputName, catSel, plus);
+  wrap.appendChild(addbar);
+  return wrap;
+}
+
+function travelSections(items) {
+  const grouped = {};
+  for (const it of items) {
+    const k = it.category || '__uncat__';
+    (grouped[k] ||= []).push(it);
+  }
+  const known = new Set(state.travelCats.map(c => c.name));
+  const sections = [];
+  for (const cat of state.travelCats) if (grouped[cat.name]) sections.push({ title: cat.name, icon: TRAVEL_ICONS[cat.icon] || '', items: grouped[cat.name] });
+  for (const k of Object.keys(grouped)) {
+    if (k === '__uncat__' || known.has(k)) continue;
+    sections.push({ title: k, icon: '', items: grouped[k] });
+  }
+  if (grouped['__uncat__']) sections.push({ title: UNCAT, icon: '', items: grouped['__uncat__'] });
+  return sections;
+}
+
+function tripItemRow(trip, item, rebPacking, rebCat, rebList) {
+  const row = el('div', 'travel-item-row');
+  const cBox = el('button', `owner-check c${item.packedByC ? ' on' : ''}`, 'C');
+  cBox.onclick = (e) => { e.stopPropagation(); togglePacked(trip.id, item.id, 'c').then(() => { rebPacking(); rebList(); }); };
+  const mBox = el('button', `owner-check m${item.packedByM ? ' on' : ''}`, 'M');
+  mBox.onclick = (e) => { e.stopPropagation(); togglePacked(trip.id, item.id, 'm').then(() => { rebPacking(); rebList(); }); };
+  const nameEl = el('div', 'travel-item-name' + (item.packedByC && item.packedByM ? ' both' : ''), item.name);
+  nameEl.onclick = () => openTravelItemEditor({ mode: 'trip', tripId: trip.id, item });
+  row.append(cBox, mBox, nameEl,
+    button('danger', '✕', (e) => { e.stopPropagation(); if (confirm(`Delete "${item.name}"?`)) deleteTripItem(trip.id, item.id).then(() => { rebPacking(); rebCat(); rebList(); }); })
+  );
+  return row;
+}
+
+function templateDetailScreen(templateId) {
+  const wrap = el('div'); wrap.style.display = 'flex'; wrap.style.flexDirection = 'column'; wrap.style.flex = '1';
+  const tmpl = templateById(templateId);
+  wrap.appendChild(navWith(tmpl ? tmpl.name : 'Template', {
+    back: navBack,
+    right: button('icon', '✎', () => {
+      const n = prompt('Rename template:', tmpl?.name || ''); if (n) renameTemplate(templateId, n);
+    })
+  }));
+  const scroll = el('div', 'scroll');
+  let catFilter = 'all';
+  const catRow = el('div', 'hist-filter-row');
+  function rebuildCat() {
+    catRow.innerHTML = '';
+    if (!tmpl) return;
+    const used = new Set(tmpl.items.map(i => i.category).filter(Boolean));
+    const hasUncat = tmpl.items.some(i => !i.category);
+    state.travelCats.filter(c => used.has(c.name)).forEach(c => {
+      const chip = el('button', 'hist-chip', TRAVEL_ICONS[c.icon] || c.name[0]);
+      if (catFilter === `cat:${c.name}`) chip.classList.add('on');
+      chip.onclick = () => { catFilter = catFilter === `cat:${c.name}` ? 'all' : `cat:${c.name}`; rebuildCat(); rebuildList(); };
+      catRow.appendChild(chip);
+    });
+    if (hasUncat) {
+      const chip = el('button', 'hist-chip', UNCAT);
+      if (catFilter === 'uncat') chip.classList.add('on');
+      chip.onclick = () => { catFilter = catFilter === 'uncat' ? 'all' : 'uncat'; rebuildCat(); rebuildList(); };
+      catRow.appendChild(chip);
+    }
+  }
+  rebuildCat();
+  scroll.appendChild(catRow);
+  const listWrap = el('div');
+  function rebuildList() {
+    listWrap.innerHTML = '';
+    if (!tmpl) return;
+    let items = tmpl.items;
+    if (catFilter.startsWith('cat:')) items = items.filter(i => i.category === catFilter.slice(4));
+    else if (catFilter === 'uncat') items = items.filter(i => !i.category);
+    if (items.length === 0) {
+      listWrap.appendChild(el('div', 'empty', el('div', 'e-icon', '📄'), el('div', '', el('strong', '', tmpl.items.length ? 'Nothing Here' : 'Empty Template'))));
+      return;
+    }
+    const sections = travelSections(items);
+    const groupList = el('div', 'group-list');
+    sections.forEach(sec => {
+      groupList.appendChild(el('div', 'section-title', sec.icon ? `${sec.icon} ${sec.title}` : sec.title));
+      const card = el('div', 'section-card');
+      sec.items.forEach(it => {
+        const row = el('div', 'travel-item-row');
+        const nameEl = el('div', 'travel-item-name', it.name);
+        nameEl.onclick = () => openTravelItemEditor({ mode: 'template', templateId, item: it });
+        row.append(nameEl, button('danger', '✕', (e) => { e.stopPropagation(); if (confirm(`Delete "${it.name}"?`)) deleteTemplateItem(templateId, it.id).then(() => { rebuildCat(); rebuildList(); }); }));
+        card.appendChild(row);
+      });
+      groupList.appendChild(card);
+    });
+    listWrap.appendChild(groupList);
+  }
+  rebuildList();
+  scroll.appendChild(listWrap);
+  wrap.appendChild(scroll);
+
+  // Add bar
+  let newName = '', selCat = null;
+  const inputName = el('input', 'name'); inputName.type = 'text'; inputName.placeholder = 'New item';
+  inputName.addEventListener('input', () => { newName = inputName.value; plus.disabled = !newName.trim(); });
+  const catSel = el('select');
+  const o0 = el('option', '', UNCAT); o0.value = ''; catSel.appendChild(o0);
+  state.travelCats.forEach(c => {
+    const o = el('option', '', `${TRAVEL_ICONS[c.icon] || '·'}  ${c.name}`); o.value = c.name; catSel.appendChild(o);
+  });
+  catSel.onchange = () => selCat = catSel.value || null;
+  const plus = el('button', 'plus', '＋'); plus.disabled = true;
+  function commit() {
+    const t = newName.trim(); if (!t) return;
+    addTemplateItem(templateId, { id: cryptoUUID(), name: t, category: selCat, packedByC: false, packedByM: false })
+      .then(() => { inputName.value = ''; newName = ''; plus.disabled = true; rebuildCat(); rebuildList(); });
+  }
+  inputName.addEventListener('keydown', (e) => { if (e.key === 'Enter') commit(); });
+  plus.onclick = commit;
+  const addbar = el('div', 'addbar');
+  addbar.append(inputName, catSel, plus);
+  wrap.appendChild(addbar);
+  return wrap;
+}
+
+function openTravelItemEditor({ mode, tripId, templateId, item }) {
+  let name = item.name, category = item.category;
+  const backdrop = el('div', 'modal-backdrop');
+  const m = el('div', 'modal');
+  const close = () => { backdrop.remove(); closeModal(); };
+  const nav = el('div', 'nav');
+  nav.append(button('', 'Cancel', close), el('div', 'nav-title', 'Edit Item'),
+    button('', 'Save', async () => {
+      if (!name.trim()) return;
+      const updated = { ...item, name: name.trim(), category };
+      if (mode === 'trip') await updateTripItem(tripId, updated);
+      else await updateTemplateItem(templateId, updated);
+      close();
+    }));
+  m.appendChild(nav);
+  const form = el('div', 'form');
+  const s1 = el('div', 'form-section'); s1.appendChild(el('h3', '', 'Name'));
+  const nIn = el('input'); nIn.type = 'text'; nIn.value = name;
+  nIn.addEventListener('input', () => name = nIn.value);
+  s1.appendChild(el('div', 'form-row', nIn));
+  const s2 = el('div', 'form-section'); s2.appendChild(el('h3', '', 'Category'));
+  const catSel = el('select');
+  const o0 = el('option', '', UNCAT); o0.value = ''; catSel.appendChild(o0);
+  state.travelCats.forEach(c => {
+    const o = el('option', '', `${TRAVEL_ICONS[c.icon] || '·'}  ${c.name}`); o.value = c.name; catSel.appendChild(o);
+  });
+  catSel.value = category || ''; catSel.onchange = () => category = catSel.value || null;
+  s2.appendChild(el('div', 'form-row', catSel));
+  form.append(s1, s2);
+  m.appendChild(form);
+  backdrop.appendChild(m);
+  backdrop.onclick = (e) => { if (e.target === backdrop) close(); };
   openModal(backdrop);
 }
 
@@ -1110,22 +2413,16 @@ function openEditBookModal(book) {
       try {
         state.loading = true; render();
         await exchangeAuthCode(code);
-        url.searchParams.delete('code');
-        url.searchParams.delete('state');
+        url.searchParams.delete('code'); url.searchParams.delete('state');
         window.history.replaceState({}, '', url.pathname + (url.search ? '?' + url.searchParams.toString() : ''));
-      } catch (e) {
-        state.error = e.message;
-      } finally {
-        state.loading = false;
-      }
+      } catch (e) { state.error = e.message; }
+      finally { state.loading = false; }
     }
     if (loadRefreshToken()) {
-      state.view = 'main';
-      render();
-      await loadBooks();
+      state.view = 'main'; render();
+      await loadAll();
     } else {
-      state.view = 'signin';
-      render();
+      state.view = 'signin'; render();
     }
   } catch (e) {
     state.error = e.message; render();
