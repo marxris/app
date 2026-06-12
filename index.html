@@ -704,11 +704,10 @@ function mainScreen() {
 
   const account = el('div', 'account-card');
   const row = el('div', 'acc-row');
-  row.append(el('div', '', { textContent: '' }, '✓ Connected to Dropbox'));
+  row.appendChild(el('div', '', '✓ Connected to Dropbox'));
   account.appendChild(row);
   const signOutRow = el('div', 'acc-row');
-  const so = button('danger', 'Sign Out from Dropbox', signOut);
-  signOutRow.appendChild(so);
+  signOutRow.appendChild(button('danger', 'Sign Out from Dropbox', signOut));
   account.appendChild(signOutRow);
   scroll.appendChild(account);
 
@@ -954,8 +953,6 @@ function openAddBookModal() {
   titleInput.addEventListener('focus', () => { renderDropdown(); });
   authorInput.addEventListener('focus', () => { renderDropdown(); });
 
-  authorInput.focus();
-
   async function selectAuthor(name) {
     selectedAuthor = name;
     authorInput.value = name;
@@ -1026,6 +1023,7 @@ function openAddBookModal() {
   backdrop.appendChild(m);
   backdrop.onclick = (e) => { if (e.target === backdrop) { backdrop.remove(); closeModal(); } };
   openModal(backdrop);
+  setTimeout(() => authorInput.focus(), 0);
 }
 
 // ---- Edit Book modal ----
