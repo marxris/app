@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>MarXris — Shopping</title>
+<title>MarXris</title>
 <style>
   :root {
     --bg: #f2f2f7;
@@ -16,6 +16,10 @@
     --green: #34c759;
     --red: #ff3b30;
     --orange: #ff9500;
+    --blue: #007aff;
+    --purple: #af52de;
+    --pink: #f23388;
+    --amber: #d99000;
     --gray: #8e8e93;
     --text: #000;
     --text-2: #6c6c70;
@@ -46,7 +50,6 @@
   input, select, textarea { font: inherit; color: inherit; }
   #app { min-height: 100%; display: flex; flex-direction: column; }
 
-  /* Nav bar */
   .nav {
     position: sticky; top: 0; z-index: 10;
     padding: calc(var(--safe-top) + 6px) 12px 6px;
@@ -60,26 +63,19 @@
   .nav button.icon { font-size: 22px; line-height: 1; }
   .nav .ghost { width: 32px; }
 
-  /* Layout */
   .scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: calc(var(--safe-bot) + 24px); }
-  .group-list { padding: 12px; display: flex; flex-direction: column; gap: 16px; }
-  .section-card { background: var(--bg-elev); border-radius: var(--radius); overflow: hidden; }
-  .section-title { padding: 4px 16px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-2); display: flex; align-items: center; gap: 6px; }
-  .row {
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px 16px; min-height: 44px;
+  .bottombar {
+    padding: 8px 12px calc(10px + var(--safe-bot));
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: saturate(180%) blur(20px);
     border-top: 1px solid var(--bg-soft);
+    display: flex; align-items: center; justify-content: center;
   }
-  .row:first-child { border-top: 0; }
-  .row .grow { flex: 1; min-width: 0; }
-  .row.tap { cursor: pointer; }
-  .row.tap:active { background: var(--bg-soft); }
-  .row .icon { width: 28px; text-align: center; font-size: 20px; }
-  .row .chev { color: var(--gray); font-size: 18px; }
-  .muted { color: var(--text-2); font-size: 13px; }
-  .subtle { color: var(--text-2); font-size: 11px; }
+  .bottombar button {
+    color: var(--tint); font-weight: 500; padding: 8px 14px;
+    display: flex; align-items: center; gap: 6px;
+  }
 
-  /* Sign in */
   .signin {
     flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: 18px; padding: 24px; text-align: center;
@@ -90,61 +86,118 @@
     background: var(--tint); color: #fff; font-weight: 600;
     padding: 14px 22px; border-radius: 14px; min-width: 240px;
   }
-  .primary:active { opacity: 0.85; }
   .help { font-size: 12px; color: var(--text-2); max-width: 32em; line-height: 1.5; }
   .help code { background: var(--bg-soft); padding: 1px 6px; border-radius: 4px; font-size: 11px; }
+  .err { color: var(--red); font-size: 13px; padding: 6px 12px; }
 
-  /* Shop rows */
-  .shop-emoji {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: var(--bg-tert); display: flex; align-items: center; justify-content: center;
-    font-size: 20px; flex: 0 0 36px;
+  /* Main page */
+  .main-welcome {
+    font-size: 30px; font-weight: 800; letter-spacing: -0.02em; text-align: center; padding: 36px 16px 8px;
   }
+  .main-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 16px;
+  }
+  .tile {
+    border-radius: 16px; padding: 28px 12px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    cursor: pointer; transition: transform 0.08s;
+  }
+  .tile:active { transform: scale(0.98); }
+  .tile.disabled { opacity: 0.45; cursor: default; }
+  .tile-icon { font-size: 44px; line-height: 1; }
+  .tile-name { font-weight: 600; font-size: 17px; }
+  .tile.shopping { background: color-mix(in srgb, var(--blue) 14%, transparent); color: var(--blue); }
+  .tile.expenses { background: color-mix(in srgb, var(--green) 14%, transparent); color: var(--green); }
+  .tile.books    { background: color-mix(in srgb, var(--orange) 14%, transparent); color: var(--orange); }
+  .tile.travel   { background: color-mix(in srgb, var(--purple) 14%, transparent); color: var(--purple); }
+  .account-card { margin: 0 16px 16px; padding: 0; background: var(--bg-elev); border-radius: var(--radius); }
+  .acc-row { padding: 14px 16px; display: flex; align-items: center; gap: 8px; }
+  .danger { color: var(--red); font-weight: 500; }
 
-  /* Items */
-  .item-row .check { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--gray); display: flex; align-items: center; justify-content: center; flex: 0 0 28px; }
-  .item-row .check.on { background: var(--green); border-color: var(--green); color: #fff; }
-  .item-row .thumb { width: 36px; height: 36px; border-radius: 6px; background: var(--bg-tert); flex: 0 0 36px; background-size: cover; background-position: center; cursor: zoom-in; }
-  .item-row .name { flex: 1; min-width: 0; }
-  .item-row.checked .name { text-decoration: line-through; color: var(--text-2); }
-  .item-row .qty { background: var(--bg-tert); color: var(--text-2); border-radius: 999px; padding: 3px 8px; font-size: 12px; font-weight: 500; }
-  .item-row.swipe { position: relative; }
+  /* Books */
+  .filter-row {
+    display: flex; gap: 8px; padding: 8px 12px; overflow-x: auto; align-items: center;
+  }
+  .pill {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 500;
+    border: 1.5px solid transparent;
+  }
+  .pill .count {
+    padding: 1px 6px; border-radius: 999px;
+    background: rgba(255,255,255,0.2);
+  }
+  .pill.toFind  { background: color-mix(in srgb, var(--amber) 12%, transparent);  color: var(--amber); }
+  .pill.toRead  { background: color-mix(in srgb, var(--blue) 12%, transparent);   color: var(--blue); }
+  .pill.read    { background: color-mix(in srgb, var(--green) 12%, transparent);  color: var(--green); }
+  .pill.stopped { background: color-mix(in srgb, var(--gray) 12%, transparent);   color: var(--gray); }
+  .pill.toFind .count  { background: color-mix(in srgb, var(--amber) 25%, transparent); }
+  .pill.toRead .count  { background: color-mix(in srgb, var(--blue) 25%, transparent); }
+  .pill.read .count    { background: color-mix(in srgb, var(--green) 25%, transparent); }
+  .pill.stopped .count { background: color-mix(in srgb, var(--gray) 25%, transparent); }
+  .pill.toFind.active  { border-color: var(--amber); }
+  .pill.toRead.active  { border-color: var(--blue); }
+  .pill.read.active    { border-color: var(--green); }
+  .pill.stopped.active { border-color: var(--gray); }
 
-  /* Add bar */
-  .addbar {
-    position: sticky; bottom: 0;
-    background: color-mix(in srgb, var(--bg) 92%, transparent);
-    backdrop-filter: saturate(180%) blur(20px);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
-    padding: 8px 12px calc(8px + var(--safe-bot));
-    display: flex; gap: 8px; align-items: center;
-    border-top: 1px solid var(--bg-soft);
-  }
-  .addbar input.name { flex: 1; min-width: 0; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--bg-tert); background: var(--bg-elev); }
-  .addbar .cat-pick {
-    padding: 8px 12px; border-radius: 999px; background: var(--bg-tert); display: flex; align-items: center; gap: 4px; font-size: 12px; max-width: 160px;
-  }
-  .addbar .cat-pick select {
-    appearance: none; background: transparent; border: 0; padding: 0; padding-right: 2px;
-    max-width: 120px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;
-  }
-  .addbar .plus {
-    width: 36px; height: 36px; border-radius: 50%;
-    color: var(--tint); display: flex; align-items: center; justify-content: center; font-size: 28px;
-  }
-  .addbar .plus[disabled] { color: var(--gray); cursor: default; }
+  .shelf { padding: 0 12px 24px; display: flex; flex-direction: column; gap: 14px; }
+  .shelf-section-title { padding: 4px 4px; font-weight: 600; font-size: 15px; }
+  .shelf-section-title.toFind  { color: var(--amber); }
+  .shelf-section-title.toRead  { color: var(--blue); }
+  .shelf-section-title.read    { color: var(--green); }
+  .shelf-section-title.stopped { color: var(--gray); }
 
-  /* Suggestions */
-  .suggestions {
-    overflow-x: auto; display: flex; gap: 8px; padding: 8px 12px;
-    border-top: 1px solid var(--bg-soft); background: var(--bg-elev);
+  .book-card {
+    display: flex; gap: 12px;
+    background: var(--bg-elev); border-radius: 10px;
+    padding: 12px; margin-bottom: 8px;
   }
-  .sugg-chip {
-    flex: 0 0 auto; padding: 6px 12px; border-radius: 999px; background: var(--bg-soft);
-    display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500;
+  .cover {
+    width: 50px; height: 72px; border-radius: 4px;
+    background-size: cover; background-position: center;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; text-align: center; font-size: 9px; font-weight: 500;
+    padding: 3px; flex: 0 0 50px;
   }
-  .sugg-chip .thumb { width: 22px; height: 22px; border-radius: 4px; background-size: cover; background-position: center; }
-  .sugg-chip .q { color: var(--text-2); }
+  .cover.sm { width: 32px; height: 46px; flex: 0 0 32px; font-size: 7px; }
+  .book-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .book-title {
+    font-weight: 600; font-size: 14px;
+    text-decoration: underline; text-decoration-style: solid;
+    cursor: pointer;
+  }
+  .book-year { font-style: italic; font-size: 12px; color: var(--text-2); margin-left: 4px; font-weight: 400; text-decoration: none; }
+  .book-author { font-size: 12px; color: var(--text-2); }
+  .book-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 4px; }
+  .book-actions .btn {
+    font-size: 12px; font-weight: 500;
+    padding: 4px 10px; border-radius: 999px;
+  }
+  .btn.advance.toRead  { background: color-mix(in srgb, var(--blue) 15%, transparent);  color: var(--blue); }
+  .btn.advance.read    { background: color-mix(in srgb, var(--green) 15%, transparent); color: var(--green); }
+  .btn.advance.stopped { background: color-mix(in srgb, var(--gray) 18%, transparent);  color: var(--gray); }
+  .btn.more { color: var(--text-2); background: transparent; padding: 4px 6px; }
+  .date-pill {
+    font-size: 12px; padding: 3px 8px; border-radius: 999px;
+  }
+  .date-pill.read    { background: color-mix(in srgb, var(--green) 12%, transparent); color: var(--green); }
+  .date-pill.stopped { background: color-mix(in srgb, var(--gray) 14%, transparent);  color: var(--gray); }
+  .book-side { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+  .icon-btn {
+    width: 28px; height: 28px; border-radius: 50%; background: var(--bg-soft);
+    color: var(--text-2); display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .icon-btn.star.on { color: #ffcc00; background: var(--bg-soft); }
+
+  .more-panel { padding-top: 8px; border-top: 1px solid var(--bg-soft); margin-top: 8px; }
+  .more-row {
+    display: flex; gap: 8px; padding: 4px 0; align-items: center;
+  }
+  .more-row .add {
+    margin-left: auto; color: var(--tint); font-weight: 500; font-size: 12px;
+  }
+  .more-loading { font-size: 12px; color: var(--text-2); padding: 6px 0; }
 
   /* Modal */
   .modal-backdrop {
@@ -158,80 +211,59 @@
     border-radius: 14px 14px 0 0;
     padding-bottom: var(--safe-bot);
   }
-  .modal .nav { position: relative; }
-
-  /* Form */
-  .form { padding: 12px; display: flex; flex-direction: column; gap: 16px; }
+  .form { padding: 12px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
   .form-section { background: var(--bg-elev); border-radius: var(--radius); overflow: hidden; }
-  .form-section h3 { margin: 0; padding: 8px 16px; font-size: 12px; text-transform: uppercase; color: var(--text-2); font-weight: 500; letter-spacing: 0.04em; }
-  .form-row { padding: 12px 16px; display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--bg-soft); }
-  .form-row:first-of-type { border-top: 0; }
+  .form-section h3 { margin: 0; padding: 8px 16px 4px; font-size: 12px; text-transform: uppercase; color: var(--text-2); font-weight: 500; letter-spacing: 0.04em; }
+  .form-row { padding: 8px 16px 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .form-row input[type=text], .form-row input[type=number] {
-    flex: 1; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--bg-tert); background: var(--bg);
+    flex: 1; min-width: 0; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--bg-tert); background: var(--bg);
   }
-  .seg { display: flex; gap: 4px; }
+  .field-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 8px 12px 12px; }
+  .field-pair input { padding: 10px 12px; border-radius: 10px; border: 1px solid var(--bg-tert); background: var(--bg); }
+
+  .dropdown {
+    background: var(--bg-elev); border-radius: 8px;
+    margin: 0 12px 12px; max-height: 50vh; overflow-y: auto;
+  }
+  .dd-row {
+    padding: 10px 12px; display: flex; align-items: center; gap: 8px;
+    border-top: 1px solid var(--bg-soft);
+  }
+  .dd-row:first-child { border-top: 0; }
+  .dd-row.tap { cursor: pointer; }
+  .dd-row.tap:active { background: var(--bg-soft); }
+  .dd-row .src { font-size: 11px; color: var(--text-2); }
+  .dd-row .name { flex: 1; font-size: 14px; min-width: 0; }
+  .dd-row .meta { font-size: 11px; color: var(--text-2); }
+  .dd-row .plus { color: var(--tint); font-size: 18px; }
+
+  /* Edit modal */
+  .picker-row { padding: 8px 12px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .seg button {
-    padding: 6px 10px; border-radius: 8px; background: var(--bg-soft); color: var(--text);
-    font-weight: 500; font-size: 13px;
+    padding: 6px 12px; border-radius: 8px; background: var(--bg-soft); color: var(--text); font-size: 13px;
   }
   .seg button.on { background: var(--tint); color: #fff; }
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; }
+  .switch {
+    width: 44px; height: 26px; border-radius: 999px; background: var(--bg-tert); position: relative;
+    transition: background 0.15s;
+  }
+  .switch.on { background: var(--green); }
+  .switch::after {
+    content: ''; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px;
+    background: #fff; border-radius: 50%; transition: left 0.15s;
+  }
+  .switch.on::after { left: 20px; }
+  .dates-row { padding: 12px 16px; display: flex; justify-content: space-between; font-size: 13px; color: var(--text-2); border-top: 1px solid var(--bg-soft); }
+  .dates-row:first-of-type { border-top: 0; }
 
-  /* Icon grid */
-  .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(52px, 1fr)); gap: 10px; padding: 12px 16px; }
-  .icon-cell {
-    width: 44px; height: 44px; border-radius: 8px; background: var(--bg-soft);
-    display: flex; align-items: center; justify-content: center; font-size: 22px;
-    margin: 0 auto;
-    border: 2px solid transparent;
-  }
-  .icon-cell.on { background: var(--tint-soft); border-color: var(--tint); }
-
-  /* History grid */
-  .hist-filter-row { display: flex; gap: 8px; padding: 8px 12px; overflow-x: auto; background: var(--bg-elev); border-bottom: 1px solid var(--bg-soft); }
-  .hist-chip {
-    width: 40px; height: 40px; border-radius: 50%; background: var(--bg-soft);
-    display: flex; align-items: center; justify-content: center; font-size: 20px; flex: 0 0 40px;
-  }
-  .hist-chip.on { background: var(--tint); color: #fff; }
-  .hist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px; }
-  .hist-cell {
-    padding: 10px; border-radius: 10px; display: flex; flex-direction: column; gap: 4px;
-    cursor: pointer; transition: opacity 0.15s;
-  }
-  .hist-cell.available {
-    background: var(--tint-soft); color: var(--tint);
-  }
-  .hist-cell.added {
-    background: var(--bg-tert); color: var(--text-2); cursor: default;
-  }
-  .hist-cell .h-name { font-weight: 500; font-size: 14px; }
-  .hist-cell .h-qty { font-size: 11px; color: var(--text-2); }
-
-  /* Misc */
   .empty {
     flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 8px; color: var(--text-2); padding: 24px; text-align: center;
+    gap: 8px; color: var(--text-2); padding: 60px 24px; text-align: center;
   }
   .empty .e-icon { font-size: 48px; opacity: 0.5; }
-  .swipe-del {
-    background: var(--red); color: #fff; padding: 0 16px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: 500;
-  }
-  .toolbar-icon { font-size: 22px; }
 
-  /* List operations (edit/delete categories) */
-  .cat-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--bg-soft); }
-  .cat-row:first-child { border-top: 0; }
-  .cat-row .del { color: var(--red); font-weight: 500; }
-  .photo-pick { display: flex; align-items: center; gap: 12px; }
-  .photo-pick .preview {
-    width: 60px; height: 60px; border-radius: 8px; background: var(--bg-tert); background-size: cover; background-position: center;
-    display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--gray);
-  }
-  .link { color: var(--tint); font-weight: 500; }
-  .danger-link { color: var(--red); font-weight: 500; font-size: 13px; }
-  .err { color: var(--red); font-size: 13px; padding: 6px 12px; }
+  .helper-tip { font-size: 12px; color: var(--text-2); padding: 8px 16px; }
 </style>
 </head>
 <body>
@@ -246,32 +278,19 @@
 const APP_KEY = '6c8d4is46ktgahy';
 const REDIRECT_URI = window.location.origin + window.location.pathname;
 
+const BOOKS_PATH = '/books/list.json';
+
 // =====================================================================
-// SF Symbol name → emoji (so iOS + web read the same JSON consistently)
+// Status metadata
 // =====================================================================
-const ICONS = {
-  'cart': '🛒', 'basket': '🧺', 'carrot': '🥕', 'fork.knife': '🍴', 'fish': '🐟',
-  'wineglass': '🍷', 'mug': '☕', 'birthday.cake': '🎂', 'drop': '💧', 'leaf': '🌿',
-  'snowflake': '❄️', 'pills': '💊', 'heart': '❤️', 'house': '🏠', 'bubbles.and.sparkles': '🫧',
-  'tshirt': '👕', 'pawprint': '🐾', 'flower': '🌸', 'lightbulb': '💡', 'gift': '🎁',
-  'sparkles': '✨', 'cylinder.fill': '🥫', 'milk': '🥛', 'flame.fill': '🔥', 'popcorn.fill': '🍞'
+const STATUSES = ['toFind', 'toRead', 'read', 'stopped'];
+const STATUS_LABEL = { toFind: 'To Find', toRead: 'To Read', read: 'Read', stopped: 'Stop' };
+const ADVANCES = {
+  toFind:  [{ to: 'toRead',  label: 'Found ✓' }],
+  toRead:  [{ to: 'read',    label: 'Read ✓' }, { to: 'stopped', label: 'Stopped' }],
+  read:    [],
+  stopped: []
 };
-const ALL_ICONS = Object.keys(ICONS);
-const DEFAULT_ICON = 'cart';
-const UNCAT = '—';
-
-const DEFAULT_CATEGORIES = [
-  { id: cryptoUUID(), name: 'Produce',     icon: 'carrot' },
-  { id: cryptoUUID(), name: 'Dairy',       icon: 'drop' },
-  { id: cryptoUUID(), name: 'Meat & Fish', icon: 'fish' },
-  { id: cryptoUUID(), name: 'Bakery',      icon: 'birthday.cake' },
-  { id: cryptoUUID(), name: 'Pantry',      icon: 'basket' },
-  { id: cryptoUUID(), name: 'Frozen',      icon: 'snowflake' },
-  { id: cryptoUUID(), name: 'Beverages',   icon: 'mug' },
-  { id: cryptoUUID(), name: 'Household',   icon: 'house' }
-];
-
-const UNIT_SYMBOL = { count: '×', gram: 'g', kilo: 'kg' };
 
 // =====================================================================
 // Utilities
@@ -280,54 +299,44 @@ function cryptoUUID() {
   if (crypto.randomUUID) return crypto.randomUUID();
   const b = crypto.getRandomValues(new Uint8Array(16));
   b[6] = (b[6] & 0x0f) | 0x40; b[8] = (b[8] & 0x3f) | 0x80;
-  const hex = [...b].map(x => x.toString(16).padStart(2, '0')).join('');
-  return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
+  const h = [...b].map(x => x.toString(16).padStart(2, '0')).join('');
+  return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;
 }
 function base64url(buf) {
   return btoa(String.fromCharCode(...new Uint8Array(buf)))
     .replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
 }
-async function sha256(str) {
-  return crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-}
+async function sha256(str) { return crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)); }
 function randomVerifier() {
   const bytes = crypto.getRandomValues(new Uint8Array(64));
   return base64url(bytes);
 }
-function quantityDisplay(q) {
-  const s = (q.amount === Math.floor(q.amount)) ? String(q.amount) : String(q.amount);
-  if (q.unit === 'count') return `${UNIT_SYMBOL[q.unit]}${s}`;
-  return `${s}${UNIT_SYMBOL[q.unit]}`;
+function ddMmYyyy(iso) {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  return `${dd}/${mm}/${d.getFullYear()}`;
 }
-function dataURLFromBase64Jpeg(b64) {
-  return `data:image/jpeg;base64,${b64}`;
+function debounce(fn, ms) {
+  let t = null;
+  return (...args) => {
+    if (t) clearTimeout(t);
+    t = setTimeout(() => { t = null; fn(...args); }, ms);
+  };
 }
-async function resizeImageToBase64(file, maxSide = 800, quality = 0.7) {
-  const dataUrl = await new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result);
-    r.onerror = rej;
-    r.readAsDataURL(file);
-  });
-  const img = await new Promise((res, rej) => {
-    const i = new Image();
-    i.onload = () => res(i);
-    i.onerror = rej;
-    i.src = dataUrl;
-  });
-  const max = Math.max(img.width, img.height);
-  const scale = max > maxSide ? maxSide / max : 1;
-  const w = Math.round(img.width * scale);
-  const h = Math.round(img.height * scale);
-  const canvas = document.createElement('canvas');
-  canvas.width = w; canvas.height = h;
-  canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-  const jpegUrl = canvas.toDataURL('image/jpeg', quality);
-  return jpegUrl.split(',', 2)[1];
+function placeholderColor(title) {
+  let hash = 0;
+  for (const ch of title) hash = (hash + ch.charCodeAt(0)) | 0;
+  const hue = (Math.abs(hash) % 360);
+  return `hsl(${hue}, 45%, 55%)`;
+}
+function firstThreeWords(title) {
+  return title.trim().split(/\s+/).slice(0, 3).join(' ');
 }
 
 // =====================================================================
-// Storage of refresh token
+// Token storage
 // =====================================================================
 const TOKEN_KEY = 'dropbox.refreshToken';
 function saveRefreshToken(t) { localStorage.setItem(TOKEN_KEY, t); }
@@ -335,7 +344,7 @@ function loadRefreshToken() { return localStorage.getItem(TOKEN_KEY); }
 function clearRefreshToken() { localStorage.removeItem(TOKEN_KEY); }
 
 // =====================================================================
-// Dropbox auth (PKCE)
+// Dropbox PKCE auth
 // =====================================================================
 let accessToken = null;
 let accessTokenExp = 0;
@@ -359,17 +368,13 @@ async function exchangeAuthCode(code) {
   const verifier = sessionStorage.getItem('pkce.verifier');
   sessionStorage.removeItem('pkce.verifier');
   if (!verifier) throw new Error('Missing PKCE verifier — start sign-in from this device.');
-  const body = new URLSearchParams({
-    code,
-    grant_type: 'authorization_code',
-    client_id: APP_KEY,
-    redirect_uri: REDIRECT_URI,
-    code_verifier: verifier
-  });
   const resp = await fetch('https://api.dropboxapi.com/oauth2/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body
+    body: new URLSearchParams({
+      code, grant_type: 'authorization_code', client_id: APP_KEY,
+      redirect_uri: REDIRECT_URI, code_verifier: verifier
+    })
   });
   if (!resp.ok) throw new Error('Token exchange failed: ' + await resp.text());
   const j = await resp.json();
@@ -381,15 +386,12 @@ async function exchangeAuthCode(code) {
 async function refreshAccessToken() {
   const refresh = loadRefreshToken();
   if (!refresh) throw new Error('Not authenticated.');
-  const body = new URLSearchParams({
-    grant_type: 'refresh_token',
-    refresh_token: refresh,
-    client_id: APP_KEY
-  });
   const resp = await fetch('https://api.dropboxapi.com/oauth2/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body
+    body: new URLSearchParams({
+      grant_type: 'refresh_token', refresh_token: refresh, client_id: APP_KEY
+    })
   });
   if (!resp.ok) { clearRefreshToken(); throw new Error('Refresh failed: ' + await resp.text()); }
   const j = await resp.json();
@@ -406,41 +408,26 @@ async function ensureAccessToken() {
 function signOut() {
   clearRefreshToken();
   accessToken = null;
-  state.shops = []; state.categories = []; state.history = []; state.account = null;
-  go({ view: 'signin' });
+  state.books = [];
+  state.view = 'signin';
+  render();
 }
 
 // =====================================================================
-// Dropbox JSON read/write
+// Dropbox JSON
 // =====================================================================
 async function dbxReadJSON(path) {
   const token = await ensureAccessToken();
   const resp = await fetch('https://content.dropboxapi.com/2/files/download', {
     method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Dropbox-API-Arg': JSON.stringify({ path })
-    }
+    headers: { 'Authorization': `Bearer ${token}`, 'Dropbox-API-Arg': JSON.stringify({ path }) }
   });
-  if (resp.status === 409) return null; // path not found
+  if (resp.status === 409) return null;
   if (!resp.ok) throw new Error('Download failed: ' + await resp.text());
-  const text = await resp.text();
-  return JSON.parse(text);
+  return JSON.parse(await resp.text());
 }
-
-async function dbxCurrentAccount() {
-  const token = await ensureAccessToken();
-  const resp = await fetch('https://api.dropboxapi.com/2/users/get_current_account', {
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${token}` }
-  });
-  if (!resp.ok) return null;
-  return resp.json();
-}
-
 async function dbxWriteJSON(path, value) {
   const token = await ensureAccessToken();
-  const body = JSON.stringify(value, null, 2);
   const arg = { path, mode: 'overwrite', autorename: false, mute: true, strict_conflict: false };
   const resp = await fetch('https://content.dropboxapi.com/2/files/upload', {
     method: 'POST',
@@ -449,782 +436,210 @@ async function dbxWriteJSON(path, value) {
       'Content-Type': 'application/octet-stream',
       'Dropbox-API-Arg': JSON.stringify(arg)
     },
-    body
+    body: JSON.stringify(value, null, 2)
   });
   if (!resp.ok) throw new Error('Upload failed: ' + await resp.text());
 }
 
 // =====================================================================
-// State + persistence
+// Open Library
+// =====================================================================
+const olAuthorBookCache = new Map();
+const olAuthorSearchCache = new Map();
+
+async function olSearchAuthors(query) {
+  const key = query.toLowerCase().trim();
+  if (olAuthorSearchCache.has(key)) return olAuthorSearchCache.get(key);
+  try {
+    const url = new URL('https://openlibrary.org/search/authors.json');
+    url.searchParams.set('q', query);
+    url.searchParams.set('limit', '10');
+    const resp = await fetch(url);
+    if (!resp.ok) return [];
+    const j = await resp.json();
+    const docs = (j.docs || []).map(d => ({ key: d.key, name: d.name, work_count: d.work_count }));
+    olAuthorSearchCache.set(key, docs);
+    return docs;
+  } catch { return []; }
+}
+
+async function olFetchAuthorBooks(author) {
+  const key = author.toLowerCase().trim();
+  if (olAuthorBookCache.has(key)) return olAuthorBookCache.get(key);
+  try {
+    const url = new URL('https://openlibrary.org/search.json');
+    url.searchParams.set('author', author);
+    url.searchParams.set('limit', '40');
+    const resp = await fetch(url);
+    if (!resp.ok) return [];
+    const j = await resp.json();
+    const docs = (j.docs || []).map(d => ({
+      title: d.title,
+      first_publish_year: d.first_publish_year,
+      cover_i: d.cover_i,
+      coverURL: d.cover_i ? `https://covers.openlibrary.org/b/id/${d.cover_i}-M.jpg` : null
+    }));
+    olAuthorBookCache.set(key, docs);
+    return docs;
+  } catch { return []; }
+}
+
+function filterAuthorBooks(rawList) {
+  const existing = new Set(state.books.map(b => b.title.toLowerCase()));
+  return rawList
+    .filter(b => !existing.has((b.title || '').toLowerCase()))
+    .sort((a, b) => (b.first_publish_year || 0) - (a.first_publish_year || 0));
+}
+
+// =====================================================================
+// State
 // =====================================================================
 const state = {
-  shops: [],
-  categories: [],
-  history: [],
-  account: null,
-  view: 'signin',
-  shopId: null,
+  view: 'signin', // 'signin' | 'main' | 'books'
+  books: [],
   loading: false,
-  error: null
+  error: null,
+  // Books-view UI:
+  bookFilter: null,        // null | 'toFind' | 'toRead' | 'read' | 'stopped'
+  showFavOnly: false,
+  expanded: new Set(),
 };
+let modal = null;
 
-const PATHS = {
-  shops: '/shopping/shops.json',
-  categories: '/shopping/categories.json',
-  history: '/shopping/history.json'
-};
-
-async function loadAll() {
+async function loadBooks() {
   state.loading = true; render();
   try {
-    const [shops, cats, history, account] = await Promise.all([
-      dbxReadJSON(PATHS.shops),
-      dbxReadJSON(PATHS.categories),
-      dbxReadJSON(PATHS.history),
-      dbxCurrentAccount()
-    ]);
-    state.shops = shops || [];
-    state.categories = (cats || DEFAULT_CATEGORIES).map(normaliseCategory);
-    state.history = (history || []).sort((a, b) => new Date(b.lastUsedAt) - new Date(a.lastUsedAt));
-    state.account = account;
+    const books = await dbxReadJSON(BOOKS_PATH) || [];
+    // Normalise: handle legacy missing fields and migrate "reading" → "toRead"
+    state.books = books.map(b => {
+      const status = b.status === 'reading' ? 'toRead'
+                   : (STATUSES.includes(b.status) ? b.status : 'toFind');
+      return {
+        id: b.id || cryptoUUID(),
+        title: b.title || '',
+        author: b.author || '',
+        publicationYear: b.publicationYear ?? null,
+        coverURL: b.coverURL || null,
+        status,
+        addedAt: b.addedAt || new Date().toISOString(),
+        statusChangedAt: b.statusChangedAt || b.addedAt || new Date().toISOString(),
+        isFavourite: !!b.isFavourite
+      };
+    });
   } catch (e) {
     state.error = e.message;
   } finally {
-    state.loading = false; render();
+    state.loading = false;
+    render();
   }
 }
 
-// Some legacy categories may be bare strings — keep compatible with the iOS app.
-function normaliseCategory(c) {
-  if (typeof c === 'string') return { id: cryptoUUID(), name: c, icon: DEFAULT_ICON };
-  return { id: c.id || cryptoUUID(), name: c.name, icon: c.icon || DEFAULT_ICON };
+async function saveBooks() {
+  try { await dbxWriteJSON(BOOKS_PATH, state.books); }
+  catch (e) { state.error = e.message; render(); }
 }
-
-async function saveShops()      { await dbxWriteJSON(PATHS.shops, state.shops); }
-async function saveCategories() { await dbxWriteJSON(PATHS.categories, state.categories); }
-async function saveHistory()    { await dbxWriteJSON(PATHS.history, state.history); }
 
 // =====================================================================
-// Domain operations
+// Book operations
 // =====================================================================
-function shopById(id) { return state.shops.find(s => s.id === id); }
-
-async function addShop(name, emoji) {
-  const trimmed = name.trim(); if (!trimmed) return;
-  state.shops.push({ id: cryptoUUID(), name: trimmed, emoji: emoji || '🛒', items: [] });
-  await saveShops(); render();
-}
-async function deleteShop(id) {
-  state.shops = state.shops.filter(s => s.id !== id);
-  await saveShops(); render();
-}
-async function addItem(shopId, item) {
-  const shop = shopById(shopId); if (!shop) return;
-  shop.items.push(item);
-  await saveShops(); render();
-}
-async function updateItem(shopId, updated) {
-  const shop = shopById(shopId); if (!shop) return;
-  const idx = shop.items.findIndex(i => i.id === updated.id);
-  if (idx < 0) return;
-  shop.items[idx] = updated;
-  await saveShops(); render();
-}
-async function deleteItem(shopId, itemId) {
-  const shop = shopById(shopId); if (!shop) return;
-  shop.items = shop.items.filter(i => i.id !== itemId);
-  await saveShops(); render();
-}
-async function toggleItem(shopId, itemId) {
-  const shop = shopById(shopId); if (!shop) return;
-  const item = shop.items.find(i => i.id === itemId);
-  if (!item) return;
-  item.isChecked = !item.isChecked;
-  if (item.isChecked) upsertHistory(item);
-  await saveShops();
-  if (item.isChecked) await saveHistory();
-  render();
-}
-async function clearChecked(shopId) {
-  const shop = shopById(shopId); if (!shop) return;
-  for (const it of shop.items.filter(i => i.isChecked)) upsertHistory(it);
-  shop.items = shop.items.filter(i => !i.isChecked);
-  await saveShops(); await saveHistory(); render();
-}
-function upsertHistory(item) {
-  const key = item.name.trim().toLowerCase();
-  const entry = {
-    name: item.name.trim(),
-    quantity: item.quantity,
-    category: item.category || null,
-    photo: item.photo || null,
-    lastUsedAt: new Date().toISOString()
-  };
-  const idx = state.history.findIndex(h => h.name.toLowerCase() === key);
-  if (idx >= 0) state.history[idx] = entry; else state.history.push(entry);
-  state.history.sort((a, b) => new Date(b.lastUsedAt) - new Date(a.lastUsedAt));
-}
-async function addFromPrevious(shopId, prev) {
-  const item = {
-    id: cryptoUUID(), name: prev.name, quantity: prev.quantity,
-    category: prev.category || null, photo: prev.photo || null, isChecked: false
-  };
-  await addItem(shopId, item);
+async function addBook({ title, author, publicationYear, coverURL }) {
+  const now = new Date().toISOString();
+  state.books.push({
+    id: cryptoUUID(),
+    title: (title || '').trim(),
+    author: (author || '').trim(),
+    publicationYear: publicationYear || null,
+    coverURL: coverURL || null,
+    status: 'toFind',
+    addedAt: now,
+    statusChangedAt: now,
+    isFavourite: false
+  });
+  await saveBooks(); render();
 }
 
-// Categories
-async function addCategory(name, icon) {
-  const trimmed = name.trim(); if (!trimmed) return;
-  if (state.categories.some(c => c.name.toLowerCase() === trimmed.toLowerCase())) return;
-  state.categories.push({ id: cryptoUUID(), name: trimmed, icon });
-  await saveCategories(); render();
+async function setStatus(book, status) {
+  const b = state.books.find(x => x.id === book.id);
+  if (!b || b.status === status) return;
+  b.status = status;
+  b.statusChangedAt = new Date().toISOString();
+  await saveBooks(); render();
 }
-async function updateCategory(original, newName, newIcon) {
-  const trimmed = newName.trim(); if (!trimmed) return;
-  const idx = state.categories.findIndex(c => c.id === original.id);
-  if (idx < 0) return;
-  const oldName = state.categories[idx].name;
-  if (state.categories.some(c => c.id !== original.id && c.name.toLowerCase() === trimmed.toLowerCase())) return;
-  state.categories[idx] = { ...state.categories[idx], name: trimmed, icon: newIcon };
-  if (oldName !== trimmed) {
-    for (const s of state.shops) for (const it of s.items) {
-      if (it.category === oldName) it.category = trimmed;
+
+async function toggleFavourite(book) {
+  const b = state.books.find(x => x.id === book.id);
+  if (!b) return;
+  b.isFavourite = !b.isFavourite;
+  await saveBooks(); render();
+}
+
+async function updateBook(original, patch) {
+  const b = state.books.find(x => x.id === original.id);
+  if (!b) return;
+  const titleOrAuthorChanged = patch.title !== b.title || patch.author !== b.author;
+  const yearCoverUntouched = patch.publicationYear === b.publicationYear && patch.coverURL === b.coverURL;
+  if (b.status !== patch.status) b.statusChangedAt = new Date().toISOString();
+  b.title = patch.title.trim();
+  b.author = patch.author.trim();
+  b.publicationYear = patch.publicationYear || null;
+  b.status = patch.status;
+  b.isFavourite = !!patch.isFavourite;
+  if (titleOrAuthorChanged && yearCoverUntouched) {
+    // Refetch from OL
+    const list = await olFetchAuthorBooks(b.author);
+    const match = list.find(x => x.title.toLowerCase() === b.title.toLowerCase());
+    if (match) {
+      b.publicationYear = match.first_publish_year || null;
+      b.coverURL = match.coverURL || null;
     }
-    for (const h of state.history) if (h.category === oldName) h.category = trimmed;
-    await saveShops(); await saveHistory();
+  } else {
+    if (patch.publicationYear !== undefined) b.publicationYear = patch.publicationYear || null;
   }
-  await saveCategories(); render();
+  await saveBooks(); render();
 }
-async function deleteCategory(cat) {
-  state.categories = state.categories.filter(c => c.id !== cat.id);
-  for (const s of state.shops) for (const it of s.items) {
-    if (it.category === cat.name) it.category = null;
+
+async function deleteBook(book) {
+  state.books = state.books.filter(b => b.id !== book.id);
+  await saveBooks(); render();
+}
+
+function countFor(status, favOnly) {
+  return state.books.filter(b => b.status === status && (!favOnly || b.isFavourite)).length;
+}
+
+function sectionsForRender() {
+  let books = state.books;
+  if (state.bookFilter) books = books.filter(b => b.status === state.bookFilter);
+  if (state.showFavOnly) books = books.filter(b => b.isFavourite);
+  const out = [];
+  for (const status of STATUSES) {
+    const items = books.filter(b => b.status === status);
+    if (items.length === 0) continue;
+    if (status === 'toFind') items.sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt));
+    else items.sort((a, b) => new Date(b.statusChangedAt) - new Date(a.statusChangedAt));
+    out.push({ status, items });
   }
-  for (const h of state.history) if (h.category === cat.name) h.category = null;
-  await Promise.all([saveCategories(), saveShops(), saveHistory()]);
-  render();
-}
-function moveCategory(from, to) {
-  if (from === to || from < 0 || to < 0) return;
-  const list = state.categories.slice();
-  const [moved] = list.splice(from, 1);
-  list.splice(to, 0, moved);
-  state.categories = list;
-  saveCategories().then(render);
+  return out;
 }
 
 // =====================================================================
 // View navigation
 // =====================================================================
-let modal = null;
-function go(target) { Object.assign(state, target); render(); }
+function goMain() { state.view = 'main'; render(); }
+function goBooks() { state.view = 'books'; render(); }
+
 function openModal(node) { modal = node; render(); }
 function closeModal() { modal = null; render(); }
 
 // =====================================================================
-// Renderers
-// =====================================================================
-const root = document.getElementById('app');
-
-function render() {
-  root.innerHTML = '';
-  let main;
-  switch (state.view) {
-    case 'signin': main = signInScreen(); break;
-    case 'shops':  main = shopsScreen(); break;
-    case 'shop':   main = shopScreen(state.shopId); break;
-    case 'prefs':  main = prefsScreen(); break;
-    default:       main = shopsScreen();
-  }
-  root.appendChild(main);
-  if (modal) root.appendChild(modal);
-}
-
-// ---- Sign in ----
-function signInScreen() {
-  const wrap = el('div', 'signin');
-  wrap.append(
-    el('div', 'e-icon', '🛒'),
-    el('h1', '', 'MarXris'),
-    el('p', '', 'Your shopping list, stored in your own Dropbox.'),
-    button('primary', 'Connect Dropbox', startSignIn),
-    el('div', 'help', '',
-      'Before this works the first time, register this page as an OAuth Redirect URI in your Dropbox developer app:',
-      el('br'), el('br'),
-      el('code', '', REDIRECT_URI)
-    )
-  );
-  if (state.error) wrap.appendChild(el('div', 'err', state.error));
-  return wrap;
-}
-
-// ---- Shops home ----
-function shopsScreen() {
-  const root = el('div');
-  root.style.display = 'flex'; root.style.flexDirection = 'column'; root.style.flex = '1';
-
-  // Nav
-  const nav = el('div', 'nav');
-  nav.append(
-    button('icon', '⚙', () => go({ view: 'prefs' })),
-    el('div', 'nav-title', 'Shopping'),
-    button('icon', '＋', () => openNewShopModal())
-  );
-  root.appendChild(nav);
-
-  const scroll = el('div', 'scroll');
-  if (state.shops.length === 0) {
-    scroll.appendChild(emptyState('🏪', 'No Shops', 'Tap + to add your first shop.'));
-  } else {
-    const list = el('div', 'group-list');
-    const card = el('div', 'section-card');
-    state.shops.forEach((shop, i) => {
-      const row = el('div', 'row tap');
-      row.onclick = () => go({ view: 'shop', shopId: shop.id });
-      row.append(
-        el('div', 'shop-emoji', shop.emoji),
-        el('div', 'grow',
-          el('div', '', shop.name),
-          el('div', 'muted', `${shop.items.length} item${shop.items.length === 1 ? '' : 's'}`)
-        ),
-        el('div', 'chev', '›')
-      );
-      addLongPressOrSwipeDelete(row, () => {
-        if (confirm(`Delete "${shop.name}"?`)) deleteShop(shop.id);
-      });
-      card.appendChild(row);
-    });
-    list.appendChild(card);
-    scroll.appendChild(list);
-  }
-  root.appendChild(scroll);
-
-  // Account section at bottom
-  const account = el('div', 'group-list');
-  account.style.padding = '0 12px 24px';
-  const ac = el('div', 'section-card');
-  if (state.account) {
-    const acctRow = el('div', 'row');
-    acctRow.append(
-      el('div', 'icon', '✓'),
-      el('div', 'grow',
-        el('div', '', `Connected as ${state.account.name?.display_name || state.account.email || 'Dropbox user'}`),
-        el('div', 'muted', state.account.email || '')
-      )
-    );
-    ac.appendChild(acctRow);
-  } else {
-    const acctRow = el('div', 'row');
-    acctRow.append(el('div', 'grow', 'Connected to Dropbox'));
-    ac.appendChild(acctRow);
-  }
-  const signOutRow = el('div', 'row tap');
-  signOutRow.onclick = signOut;
-  signOutRow.append(el('div', 'grow', el('span', 'danger-link', 'Sign Out from Dropbox')));
-  ac.appendChild(signOutRow);
-  account.appendChild(ac);
-  scroll.appendChild(account);
-  return root;
-}
-
-// ---- Per-shop view ----
-function shopScreen(shopId) {
-  const shop = shopById(shopId);
-  const wrap = el('div'); wrap.style.display = 'flex'; wrap.style.flexDirection = 'column'; wrap.style.flex = '1';
-  const nav = el('div', 'nav');
-  nav.append(
-    button('', '‹ Back', () => go({ view: 'shops' })),
-    el('div', 'nav-title', shop ? shop.name : 'Shop'),
-    button('icon', '🕓', () => openHistoryModal(shopId)),
-    button('icon', '🗑', () => {
-      if (!shop) return;
-      if (shop.items.some(i => i.isChecked) && confirm('Clear all checked items?')) clearChecked(shopId);
-    })
-  );
-  wrap.appendChild(nav);
-
-  const scroll = el('div', 'scroll');
-  if (!shop || shop.items.length === 0) {
-    scroll.appendChild(emptyState('🛒', 'No Items', 'Add items in the field below.'));
-  } else {
-    scroll.appendChild(itemsList(shop));
-  }
-  wrap.appendChild(scroll);
-
-  // Suggestions + add bar
-  const inputName = el('input', 'name');
-  inputName.type = 'text'; inputName.placeholder = 'Add item…';
-  let currentCategory = null;
-
-  const sugWrap = el('div'); // suggestions container; replaced on input
-
-  function refreshSuggestions() {
-    const q = inputName.value.trim().toLowerCase();
-    sugWrap.innerHTML = '';
-    if (!q) return;
-    const matches = state.history.filter(h => h.name.toLowerCase().includes(q)).slice(0, 6);
-    if (matches.length === 0) return;
-    const bar = el('div', 'suggestions');
-    matches.forEach(h => {
-      const chip = el('button', 'sugg-chip');
-      if (h.photo) {
-        const thumb = el('div', 'thumb');
-        thumb.style.backgroundImage = `url(${dataURLFromBase64Jpeg(h.photo)})`;
-        chip.appendChild(thumb);
-      }
-      chip.append(el('span', '', h.name), el('span', 'q', quantityDisplay(h.quantity)));
-      chip.onclick = async () => {
-        await addFromPrevious(shopId, h);
-        inputName.value = ''; refreshSuggestions();
-      };
-      bar.appendChild(chip);
-    });
-    sugWrap.appendChild(bar);
-  }
-  inputName.addEventListener('input', refreshSuggestions);
-
-  const catPick = el('label', 'cat-pick');
-  const catSel = el('select');
-  function rebuildCatOptions() {
-    catSel.innerHTML = '';
-    const o0 = el('option', '', `${UNCAT}  Uncategorised`);
-    o0.value = ''; catSel.appendChild(o0);
-    state.categories.forEach(c => {
-      const o = el('option', '', `${ICONS[c.icon] || '·'}  ${c.name}`);
-      o.value = c.name; catSel.appendChild(o);
-    });
-  }
-  rebuildCatOptions();
-  catSel.value = currentCategory || '';
-  catSel.onchange = () => { currentCategory = catSel.value || null; };
-  catPick.append(catSel);
-
-  const plus = el('button', 'plus', '＋');
-  plus.disabled = true;
-  inputName.addEventListener('input', () => { plus.disabled = inputName.value.trim() === ''; });
-
-  function commitNew() {
-    const trimmed = inputName.value.trim();
-    if (!trimmed) return;
-    const prev = state.history.find(h => h.name.toLowerCase() === trimmed.toLowerCase());
-    if (prev) {
-      addFromPrevious(shopId, prev).then(() => { inputName.value = ''; refreshSuggestions(); plus.disabled = true; });
-    } else {
-      openItemEditor({
-        mode: 'new', shopId,
-        seed: { id: cryptoUUID(), name: trimmed, quantity: { amount: 1, unit: 'count' }, category: currentCategory, photo: null, isChecked: false }
-      }).then(() => { inputName.value = ''; refreshSuggestions(); plus.disabled = true; });
-    }
-  }
-  inputName.addEventListener('keydown', (e) => { if (e.key === 'Enter') commitNew(); });
-  plus.onclick = commitNew;
-
-  const addbar = el('div', 'addbar');
-  addbar.append(inputName, catPick, plus);
-
-  wrap.appendChild(sugWrap);
-  wrap.appendChild(addbar);
-  return wrap;
-}
-
-function itemsList(shop) {
-  const list = el('div', 'group-list');
-  const unchecked = shop.items.filter(i => !i.isChecked);
-  const checked = shop.items.filter(i => i.isChecked);
-
-  const grouped = {};
-  for (const it of unchecked) {
-    const k = it.category || '__uncat__';
-    (grouped[k] ||= []).push(it);
-  }
-  const knownNames = new Set(state.categories.map(c => c.name));
-
-  const sections = [];
-  for (const cat of state.categories) {
-    if (grouped[cat.name]) sections.push({ title: cat.name, icon: ICONS[cat.icon] || '', items: grouped[cat.name] });
-  }
-  for (const k of Object.keys(grouped)) {
-    if (k === '__uncat__' || knownNames.has(k)) continue;
-    sections.push({ title: k, icon: '', items: grouped[k] });
-  }
-  if (grouped['__uncat__']) sections.push({ title: UNCAT, icon: '', items: grouped['__uncat__'] });
-  if (checked.length > 0) sections.push({ title: 'Found', icon: '✅', items: checked, foundSection: true });
-
-  for (const sec of sections) {
-    list.appendChild(el('div', 'section-title', sec.icon ? `${sec.icon} ${sec.title}` : sec.title));
-    const card = el('div', 'section-card');
-    for (const it of sec.items) card.appendChild(itemRow(shop, it));
-    list.appendChild(card);
-  }
-  return list;
-}
-
-function itemRow(shop, item) {
-  const row = el('div', 'row item-row');
-  if (item.isChecked) row.classList.add('checked');
-
-  const check = el('button', 'check', item.isChecked ? '✓' : '');
-  if (item.isChecked) check.classList.add('on');
-  check.onclick = (e) => { e.stopPropagation(); toggleItem(shop.id, item.id); };
-  row.appendChild(check);
-
-  if (item.photo) {
-    const thumb = el('div', 'thumb');
-    thumb.style.backgroundImage = `url(${dataURLFromBase64Jpeg(item.photo)})`;
-    thumb.onclick = (e) => { e.stopPropagation(); openPhotoViewer(item.photo); };
-    row.appendChild(thumb);
-  }
-
-  const name = el('div', 'name', item.name);
-  name.onclick = () => openItemEditor({ mode: 'edit', shopId: shop.id, seed: { ...item } });
-  row.appendChild(name);
-
-  row.appendChild(el('span', 'qty', quantityDisplay(item.quantity)));
-
-  addLongPressOrSwipeDelete(row, () => {
-    if (confirm(`Delete "${item.name}"?`)) deleteItem(shop.id, item.id);
-  });
-  return row;
-}
-
-// ---- Item editor ----
-function openItemEditor({ mode, shopId, seed }) {
-  return new Promise((resolve) => {
-    let name = seed.name;
-    let amount = seed.quantity.amount;
-    let unit = seed.quantity.unit;
-    let category = seed.category;
-    let photo = seed.photo;
-
-    const backdrop = el('div', 'modal-backdrop');
-    const m = el('div', 'modal');
-
-    const nav = el('div', 'nav');
-    nav.append(
-      button('', 'Cancel', () => { backdrop.remove(); closeModal(); resolve(false); }),
-      el('div', 'nav-title', mode === 'new' ? 'New Item' : 'Edit Item'),
-      button('', 'Save', save)
-    );
-    m.appendChild(nav);
-
-    const form = el('div', 'form');
-
-    // Name
-    const sName = el('div', 'form-section');
-    sName.appendChild(el('h3', '', 'Name'));
-    const inputName = el('input', '', '');
-    inputName.type = 'text'; inputName.value = name;
-    inputName.addEventListener('input', () => { name = inputName.value; });
-    sName.appendChild(wrapRow(inputName));
-
-    // Quantity
-    const sQty = el('div', 'form-section');
-    sQty.appendChild(el('h3', '', 'Quantity'));
-    const amountInput = el('input');
-    amountInput.type = 'number'; amountInput.step = 'any'; amountInput.value = amount;
-    amountInput.addEventListener('input', () => { amount = parseFloat(amountInput.value); });
-    const seg = el('div', 'seg');
-    ['count', 'gram', 'kilo'].forEach(u => {
-      const b = el('button', '', UNIT_SYMBOL[u]);
-      if (u === unit) b.classList.add('on');
-      b.onclick = () => { unit = u; refreshSeg(); };
-      seg.appendChild(b);
-    });
-    function refreshSeg() { [...seg.children].forEach((b, i) => b.classList.toggle('on', ['count','gram','kilo'][i] === unit)); }
-    sQty.appendChild(wrapRow(amountInput, seg));
-
-    // Category
-    const sCat = el('div', 'form-section');
-    sCat.appendChild(el('h3', '', 'Category'));
-    const catSel = el('select');
-    const o0 = el('option', '', UNCAT); o0.value = ''; catSel.appendChild(o0);
-    state.categories.forEach(c => {
-      const o = el('option', '', `${ICONS[c.icon] || '·'}  ${c.name}`);
-      o.value = c.name; catSel.appendChild(o);
-    });
-    catSel.value = category || '';
-    catSel.onchange = () => { category = catSel.value || null; };
-    sCat.appendChild(wrapRow(catSel));
-
-    // Photo
-    const sPhoto = el('div', 'form-section');
-    sPhoto.appendChild(el('h3', '', 'Photo'));
-    const preview = el('div', 'preview', photo ? '' : '📷');
-    if (photo) preview.style.backgroundImage = `url(${dataURLFromBase64Jpeg(photo)})`;
-    const pick = el('input'); pick.type = 'file'; pick.accept = 'image/*'; pick.style.display = 'none';
-    pick.onchange = async () => {
-      const f = pick.files?.[0]; if (!f) return;
-      photo = await resizeImageToBase64(f);
-      preview.style.backgroundImage = `url(${dataURLFromBase64Jpeg(photo)})`;
-      preview.textContent = '';
-      removeBtn.style.display = 'inline';
-    };
-    const pickBtn = el('button', 'link', photo ? 'Replace photo' : 'Pick photo');
-    pickBtn.onclick = () => pick.click();
-    const removeBtn = el('button', 'danger-link', 'Remove');
-    removeBtn.style.display = photo ? 'inline' : 'none';
-    removeBtn.onclick = () => {
-      photo = null;
-      preview.style.backgroundImage = '';
-      preview.textContent = '📷';
-      removeBtn.style.display = 'none';
-      pickBtn.textContent = 'Pick photo';
-    };
-    const photoRow = el('div', 'form-row');
-    const buttons = el('div'); buttons.style.display = 'flex'; buttons.style.flexDirection = 'column'; buttons.style.gap = '4px';
-    buttons.append(pickBtn, removeBtn, pick);
-    photoRow.append(el('div', 'photo-pick', preview, buttons));
-    sPhoto.appendChild(photoRow);
-
-    form.append(sName, sQty, sCat, sPhoto);
-    m.appendChild(form);
-
-    backdrop.appendChild(m);
-    backdrop.onclick = (e) => { if (e.target === backdrop) { backdrop.remove(); closeModal(); resolve(false); } };
-    openModal(backdrop);
-
-    async function save() {
-      const trimmed = name.trim();
-      if (!trimmed) return;
-      if (!(amount > 0)) return;
-      const item = {
-        id: seed.id,
-        name: trimmed,
-        quantity: { amount, unit },
-        category,
-        photo,
-        isChecked: seed.isChecked || false
-      };
-      if (mode === 'new') await addItem(shopId, item);
-      else await updateItem(shopId, item);
-      backdrop.remove(); closeModal(); resolve(true);
-    }
-  });
-}
-
-// ---- New shop modal ----
-function openNewShopModal() {
-  const backdrop = el('div', 'modal-backdrop');
-  const m = el('div', 'modal');
-
-  let name = '', emoji = '🛒';
-
-  const nav = el('div', 'nav');
-  nav.append(
-    button('', 'Cancel', close),
-    el('div', 'nav-title', 'New Shop'),
-    button('', 'Save', save)
-  );
-  m.appendChild(nav);
-
-  const form = el('div', 'form');
-
-  const s1 = el('div', 'form-section');
-  s1.appendChild(el('h3', '', 'Name'));
-  const nameInput = el('input'); nameInput.type = 'text';
-  nameInput.addEventListener('input', () => name = nameInput.value);
-  s1.appendChild(wrapRow(nameInput));
-
-  const s2 = el('div', 'form-section');
-  s2.appendChild(el('h3', '', 'Icon'));
-  const emojiInput = el('input'); emojiInput.type = 'text'; emojiInput.value = emoji;
-  emojiInput.style.fontSize = '24px'; emojiInput.style.maxWidth = '100px';
-  emojiInput.addEventListener('input', () => { emoji = [...emojiInput.value].pop() || '🛒'; });
-  s2.appendChild(wrapRow(emojiInput));
-
-  form.append(s1, s2);
-  m.appendChild(form);
-  backdrop.appendChild(m);
-  backdrop.onclick = (e) => { if (e.target === backdrop) close(); };
-  openModal(backdrop);
-
-  function close() { backdrop.remove(); closeModal(); }
-  async function save() {
-    if (!name.trim()) return;
-    await addShop(name, emoji); close();
-  }
-}
-
-// ---- Previous items modal ----
-function openHistoryModal(shopId) {
-  const backdrop = el('div', 'modal-backdrop');
-  const m = el('div', 'modal'); m.style.height = '92vh';
-
-  let filter = 'all'; // 'all', `cat:<name>`, 'uncat'
-
-  const nav = el('div', 'nav');
-  nav.append(
-    el('div', 'ghost'),
-    el('div', 'nav-title', 'Previous Items'),
-    button('', 'Done', close)
-  );
-  m.appendChild(nav);
-
-  const filterRow = el('div', 'hist-filter-row');
-  const grid = el('div', 'hist-grid');
-
-  const scroll = el('div', 'scroll'); scroll.style.padding = '0';
-  scroll.append(filterRow, grid);
-  m.appendChild(scroll);
-
-  function rebuild() {
-    const shop = shopById(shopId);
-    const addedNames = new Set((shop?.items || []).map(i => i.name.toLowerCase()));
-    const usedNames = new Set(state.history.map(h => h.category).filter(Boolean));
-    const hasUncat = state.history.some(h => !h.category);
-
-    filterRow.innerHTML = '';
-    state.categories.filter(c => usedNames.has(c.name)).forEach(c => {
-      const chip = el('button', 'hist-chip', ICONS[c.icon] || c.name[0]);
-      if (filter === `cat:${c.name}`) chip.classList.add('on');
-      chip.onclick = () => { filter = filter === `cat:${c.name}` ? 'all' : `cat:${c.name}`; rebuild(); };
-      filterRow.appendChild(chip);
-    });
-    if (hasUncat) {
-      const chip = el('button', 'hist-chip', UNCAT);
-      if (filter === 'uncat') chip.classList.add('on');
-      chip.onclick = () => { filter = filter === 'uncat' ? 'all' : 'uncat'; rebuild(); };
-      filterRow.appendChild(chip);
-    }
-
-    grid.innerHTML = '';
-    let items = state.history;
-    if (filter.startsWith('cat:')) items = items.filter(h => h.category === filter.slice(4));
-    else if (filter === 'uncat') items = items.filter(h => !h.category);
-
-    if (items.length === 0) {
-      grid.appendChild(el('div', 'empty', el('div', 'e-icon', '📭'), el('div', '', 'Nothing here')));
-      return;
-    }
-    items.forEach(h => {
-      const added = addedNames.has(h.name.toLowerCase());
-      const cell = el('div', 'hist-cell ' + (added ? 'added' : 'available'));
-      cell.append(
-        el('div', 'h-name', h.name),
-        el('div', 'h-qty', quantityDisplay(h.quantity))
-      );
-      if (!added) cell.onclick = async () => {
-        await addFromPrevious(shopId, h);
-        rebuild();
-      };
-      grid.appendChild(cell);
-    });
-  }
-  rebuild();
-  backdrop.appendChild(m);
-  backdrop.onclick = (e) => { if (e.target === backdrop) close(); };
-  openModal(backdrop);
-  function close() { backdrop.remove(); closeModal(); }
-}
-
-// ---- Categories preferences ----
-function prefsScreen() {
-  const wrap = el('div'); wrap.style.display = 'flex'; wrap.style.flexDirection = 'column'; wrap.style.flex = '1';
-  const nav = el('div', 'nav');
-  nav.append(
-    button('', '‹ Back', () => go({ view: 'shops' })),
-    el('div', 'nav-title', 'Categories'),
-    button('', 'Add', () => openCategoryEditor({ mode: 'new' }))
-  );
-  wrap.appendChild(nav);
-
-  const scroll = el('div', 'scroll');
-  const list = el('div', 'group-list');
-  const card = el('div', 'section-card');
-  state.categories.forEach((c, i) => {
-    const row = el('div', 'cat-row');
-    row.append(
-      el('span', '', ICONS[c.icon] || '·'),
-      el('div', 'grow', c.name),
-      button('link', 'Edit', () => openCategoryEditor({ mode: 'edit', category: c })),
-      button('del', 'Delete', () => {
-        if (confirm(`Delete category "${c.name}"?\nItems in it become uncategorised.`)) deleteCategory(c);
-      })
-    );
-    // Reorder controls
-    const up = button('link', '↑', () => moveCategory(i, Math.max(0, i - 1)));
-    const down = button('link', '↓', () => moveCategory(i, Math.min(state.categories.length - 1, i + 1)));
-    row.insertBefore(up, row.children[2]);
-    row.insertBefore(down, row.children[3]);
-    card.appendChild(row);
-  });
-  list.appendChild(card);
-  list.appendChild(el('div', 'subtle',
-    `Drag/order with ↑↓. Items in a deleted category become "${UNCAT}".`));
-  scroll.appendChild(list);
-  wrap.appendChild(scroll);
-  return wrap;
-}
-
-function openCategoryEditor({ mode, category }) {
-  let name = mode === 'new' ? '' : category.name;
-  let icon = mode === 'new' ? DEFAULT_ICON : category.icon;
-
-  const backdrop = el('div', 'modal-backdrop');
-  const m = el('div', 'modal');
-
-  const nav = el('div', 'nav');
-  nav.append(
-    button('', 'Cancel', close),
-    el('div', 'nav-title', mode === 'new' ? 'New Category' : 'Edit Category'),
-    button('', 'Save', save)
-  );
-  m.appendChild(nav);
-
-  const form = el('div', 'form');
-  const sName = el('div', 'form-section');
-  sName.appendChild(el('h3', '', 'Name'));
-  const nameInput = el('input'); nameInput.type = 'text'; nameInput.value = name;
-  nameInput.addEventListener('input', () => name = nameInput.value);
-  sName.appendChild(wrapRow(nameInput));
-
-  const sIcon = el('div', 'form-section');
-  sIcon.appendChild(el('h3', '', 'Icon'));
-  const grid = el('div', 'icon-grid');
-  ALL_ICONS.forEach(key => {
-    const cell = el('button', 'icon-cell', ICONS[key]);
-    if (key === icon) cell.classList.add('on');
-    cell.onclick = () => { icon = key; [...grid.children].forEach(c => c.classList.remove('on')); cell.classList.add('on'); };
-    grid.appendChild(cell);
-  });
-  sIcon.appendChild(grid);
-
-  form.append(sName, sIcon);
-  m.appendChild(form);
-  backdrop.appendChild(m);
-  backdrop.onclick = (e) => { if (e.target === backdrop) close(); };
-  openModal(backdrop);
-
-  function close() { backdrop.remove(); closeModal(); }
-  async function save() {
-    if (!name.trim()) return;
-    if (mode === 'new') await addCategory(name, icon);
-    else await updateCategory(category, name, icon);
-    close();
-  }
-}
-
-// ---- Photo viewer ----
-function openPhotoViewer(base64) {
-  const backdrop = el('div', 'modal-backdrop');
-  backdrop.style.background = 'rgba(0,0,0,0.92)';
-  const img = el('img');
-  img.src = dataURLFromBase64Jpeg(base64);
-  img.style.maxWidth = '100%'; img.style.maxHeight = '100%'; img.style.objectFit = 'contain';
-  backdrop.appendChild(img);
-  backdrop.onclick = () => { backdrop.remove(); closeModal(); };
-  openModal(backdrop);
-}
-
-// =====================================================================
-// Small helpers
+// DOM helpers
 // =====================================================================
 function el(tag, cls, ...kids) {
   const e = document.createElement(tag);
   if (cls) e.className = cls;
   for (const k of kids) {
     if (k == null) continue;
-    if (typeof k === 'string') e.appendChild(document.createTextNode(k));
+    if (typeof k === 'string' || typeof k === 'number') e.appendChild(document.createTextNode(String(k)));
     else e.appendChild(k);
   }
   return e;
@@ -1235,37 +650,455 @@ function button(cls, text, onclick) {
   if (onclick) b.onclick = onclick;
   return b;
 }
-function wrapRow(...kids) {
-  const r = el('div', 'form-row');
-  for (const k of kids) r.appendChild(k);
-  return r;
-}
-function emptyState(icon, title, msg) {
-  return el('div', 'empty',
-    el('div', 'e-icon', icon),
-    el('div', '', el('strong', '', title)),
-    el('div', 'muted', msg)
-  );
+
+// =====================================================================
+// Render
+// =====================================================================
+const root = document.getElementById('app');
+function render() {
+  root.innerHTML = '';
+  let main;
+  switch (state.view) {
+    case 'signin': main = signInScreen(); break;
+    case 'main':   main = mainScreen(); break;
+    case 'books':  main = booksScreen(); break;
+    default:       main = mainScreen();
+  }
+  root.appendChild(main);
+  if (modal) root.appendChild(modal);
 }
 
-// Long-press to delete (basic). Touch + mouse.
-function addLongPressOrSwipeDelete(row, action) {
-  let timer = null;
-  function start(e) {
-    timer = setTimeout(() => {
-      timer = null;
-      action();
-    }, 650);
+// ---- Sign in ----
+function signInScreen() {
+  const wrap = el('div', 'signin');
+  wrap.append(
+    el('div', '', '📚'),
+    el('h1', '', 'MarXris'),
+    el('p', '', 'Your bookshelf, stored in your own Dropbox.'),
+    button('primary', 'Connect Dropbox', startSignIn),
+    el('div', 'help', '',
+      'Register this page as an OAuth Redirect URI in your Dropbox developer app first:',
+      el('br'), el('br'),
+      el('code', '', REDIRECT_URI)
+    )
+  );
+  if (state.error) wrap.appendChild(el('div', 'err', state.error));
+  return wrap;
+}
+
+// ---- Main ----
+function mainScreen() {
+  const wrap = el('div'); wrap.style.display = 'flex'; wrap.style.flexDirection = 'column'; wrap.style.flex = '1';
+
+  const scroll = el('div', 'scroll');
+  scroll.appendChild(el('div', 'main-welcome', 'Welcome to MarXris'));
+
+  const grid = el('div', 'main-grid');
+  grid.append(
+    tile('shopping', '🛒', 'Shopping', null, true),
+    tile('expenses', '💳', 'Expenses', null, true),
+    tile('books',    '📚', 'Books',    goBooks, false),
+    tile('travel',   '🧳', 'Travel',   null, true)
+  );
+  scroll.appendChild(grid);
+
+  const account = el('div', 'account-card');
+  const row = el('div', 'acc-row');
+  row.append(el('div', '', { textContent: '' }, '✓ Connected to Dropbox'));
+  account.appendChild(row);
+  const signOutRow = el('div', 'acc-row');
+  const so = button('danger', 'Sign Out from Dropbox', signOut);
+  signOutRow.appendChild(so);
+  account.appendChild(signOutRow);
+  scroll.appendChild(account);
+
+  wrap.appendChild(scroll);
+  return wrap;
+}
+
+function tile(klass, icon, name, onclick, disabled) {
+  const t = el('div', `tile ${klass}${disabled ? ' disabled' : ''}`);
+  t.append(
+    el('div', 'tile-icon', icon),
+    el('div', 'tile-name', name)
+  );
+  if (!disabled && onclick) t.onclick = onclick;
+  if (disabled) t.title = 'Coming soon';
+  return t;
+}
+
+// ---- Books ----
+function booksScreen() {
+  const wrap = el('div'); wrap.style.display = 'flex'; wrap.style.flexDirection = 'column'; wrap.style.flex = '1';
+
+  const nav = el('div', 'nav');
+  nav.append(
+    el('div', 'ghost'),
+    el('div', 'nav-title', 'Book Shelf'),
+    button('icon', state.showFavOnly ? '★' : '☆', () => {
+      state.showFavOnly = !state.showFavOnly; render();
+    }),
+    button('icon', '＋', () => openAddBookModal())
+  );
+  wrap.appendChild(nav);
+
+  const scroll = el('div', 'scroll');
+
+  // Filter pills
+  const filterRow = el('div', 'filter-row');
+  STATUSES.forEach(status => {
+    const pill = el('button', `pill ${status}${state.bookFilter === status ? ' active' : ''}`);
+    pill.append(
+      el('span', '', STATUS_LABEL[status]),
+      el('span', 'count', String(countFor(status, state.showFavOnly)))
+    );
+    pill.onclick = () => {
+      state.bookFilter = state.bookFilter === status ? null : status;
+      render();
+    };
+    filterRow.appendChild(pill);
+  });
+  scroll.appendChild(filterRow);
+
+  // Sections
+  const sections = sectionsForRender();
+  if (sections.length === 0) {
+    scroll.appendChild(el('div', 'empty',
+      el('div', 'e-icon', '📚'),
+      el('div', '', el('strong', '', state.showFavOnly ? 'No Favourites' : 'No Books')),
+      el('div', '', state.showFavOnly ? 'Tap a star to add favourites.' : 'Tap + to add one.')
+    ));
+  } else {
+    const shelf = el('div', 'shelf');
+    for (const sec of sections) {
+      shelf.appendChild(el('div', `shelf-section-title ${sec.status}`, STATUS_LABEL[sec.status]));
+      for (const b of sec.items) shelf.appendChild(bookCard(b));
+    }
+    scroll.appendChild(shelf);
   }
-  function cancel() {
-    if (timer) { clearTimeout(timer); timer = null; }
+  wrap.appendChild(scroll);
+
+  // Bottom: Main link only
+  const bottom = el('div', 'bottombar');
+  bottom.appendChild(button('', '🏠 Main', goMain));
+  wrap.appendChild(bottom);
+  return wrap;
+}
+
+function coverElement(book, size = '') {
+  const c = el('div', `cover ${size}`);
+  c.style.background = placeholderColor(book.title || '');
+  c.textContent = firstThreeWords(book.title || '');
+  if (book.coverURL) {
+    const img = new Image();
+    img.onload = () => {
+      c.textContent = '';
+      c.style.backgroundImage = `url(${book.coverURL})`;
+      c.style.backgroundColor = 'transparent';
+    };
+    img.onerror = () => { /* keep placeholder */ };
+    img.src = book.coverURL;
   }
-  row.addEventListener('touchstart', start, { passive: true });
-  row.addEventListener('touchend', cancel);
-  row.addEventListener('touchmove', cancel);
-  row.addEventListener('mousedown', start);
-  row.addEventListener('mouseup', cancel);
-  row.addEventListener('mouseleave', cancel);
+  return c;
+}
+
+function bookCard(book) {
+  const card = el('div', 'book-card');
+  card.appendChild(coverElement(book));
+
+  const info = el('div', 'book-info');
+  const titleRow = el('div', '');
+  const titleBtn = el('span', 'book-title', book.title);
+  titleBtn.onclick = () => openEditBookModal(book);
+  titleRow.appendChild(titleBtn);
+  if (book.publicationYear) titleRow.appendChild(el('span', 'book-year', `(${book.publicationYear})`));
+  info.appendChild(titleRow);
+  if (book.author) info.appendChild(el('div', 'book-author', book.author));
+
+  const actions = el('div', 'book-actions');
+  // Status controls
+  if (book.status === 'toFind' || book.status === 'toRead') {
+    for (const adv of ADVANCES[book.status]) {
+      const b = button(`btn advance ${adv.to}`, adv.label, () => setStatus(book, adv.to));
+      actions.appendChild(b);
+    }
+  } else if (book.status === 'read' || book.status === 'stopped') {
+    actions.appendChild(el('span', `date-pill ${book.status}`, ddMmYyyy(book.statusChangedAt)));
+  }
+  // More toggle (only useful if author known)
+  if (book.author) {
+    const isOpen = state.expanded.has(book.id);
+    const m = button('btn more', isOpen ? 'Less ▲' : 'More… ▾', () => {
+      if (isOpen) state.expanded.delete(book.id); else state.expanded.add(book.id);
+      render();
+    });
+    actions.appendChild(m);
+  }
+  info.appendChild(actions);
+  card.appendChild(info);
+
+  // Right column: ×, ★
+  const side = el('div', 'book-side');
+  const del = button('icon-btn', '✕', () => {
+    if (confirm(`Delete "${book.title}"?`)) deleteBook(book);
+  });
+  side.appendChild(del);
+  if (book.status === 'toRead' || book.status === 'read') {
+    const st = button('icon-btn star' + (book.isFavourite ? ' on' : ''), book.isFavourite ? '★' : '☆', () => toggleFavourite(book));
+    side.appendChild(st);
+  }
+  card.appendChild(side);
+
+  // More panel content (rendered below the card row)
+  if (state.expanded.has(book.id) && book.author) {
+    const panel = el('div', 'more-panel');
+    panel.style.flexBasis = '100%';
+    renderMorePanel(panel, book);
+    card.style.flexWrap = 'wrap';
+    card.appendChild(panel);
+  }
+  return card;
+}
+
+async function renderMorePanel(panel, book) {
+  let results = olAuthorBookCache.get(book.author.toLowerCase().trim());
+  if (results) {
+    drawMorePanel(panel, book, filterAuthorBooks(results));
+    return;
+  }
+  panel.appendChild(el('div', 'more-loading', `Loading other books by ${book.author}…`));
+  const list = await olFetchAuthorBooks(book.author);
+  panel.innerHTML = '';
+  drawMorePanel(panel, book, filterAuthorBooks(list));
+}
+
+function drawMorePanel(panel, book, list) {
+  if (list.length === 0) {
+    panel.appendChild(el('div', 'more-loading', 'No other books found.'));
+    return;
+  }
+  for (const r of list) {
+    const row = el('div', 'more-row');
+    row.appendChild(coverElement({ title: r.title, coverURL: r.coverURL }, 'sm'));
+    const info = el('div', '');
+    info.style.flex = '1'; info.style.minWidth = '0';
+    info.append(
+      el('div', '', r.title),
+      r.first_publish_year ? el('div', 'book-author', String(r.first_publish_year)) : null
+    );
+    row.appendChild(info);
+    const addBtn = el('span', 'add', '+ Add');
+    addBtn.onclick = async () => {
+      await addBook({
+        title: r.title,
+        author: book.author,
+        publicationYear: r.first_publish_year || null,
+        coverURL: r.coverURL || null
+      });
+    };
+    row.appendChild(addBtn);
+    panel.appendChild(row);
+  }
+}
+
+// ---- Add Book modal ----
+function openAddBookModal() {
+  let author = '', title = '';
+  let selectedAuthor = null;
+  let authorOLResults = [];
+  let prefetchedBooks = [];
+
+  const backdrop = el('div', 'modal-backdrop');
+  const m = el('div', 'modal');
+
+  const nav = el('div', 'nav'); nav.style.position = 'relative';
+  nav.append(
+    button('', 'Cancel', () => { backdrop.remove(); closeModal(); }),
+    el('div', 'nav-title', 'Add Book'),
+    el('div', 'ghost')
+  );
+  m.appendChild(nav);
+
+  const fieldPair = el('div', 'field-pair');
+  const authorInput = el('input'); authorInput.type = 'text'; authorInput.placeholder = 'Author';
+  const titleInput = el('input'); titleInput.type = 'text'; titleInput.placeholder = 'Title';
+  fieldPair.append(authorInput, titleInput);
+  m.appendChild(fieldPair);
+
+  const tip = el('div', 'helper-tip', 'Type an author to search Open Library, pick one, then a title.');
+  m.appendChild(tip);
+
+  const dd = el('div', 'dropdown');
+  m.appendChild(dd);
+
+  const debouncedAuthorSearch = debounce(async (q) => {
+    if (q.trim().length < 2) { authorOLResults = []; renderDropdown(); return; }
+    const known = state.books.find(b => b.author.toLowerCase() === q.trim().toLowerCase());
+    if (known) {
+      // No new search needed, but we'll still show the OL author search for breadth.
+    }
+    const ol = await olSearchAuthors(q.trim());
+    authorOLResults = ol;
+    renderDropdown();
+  }, 400);
+
+  authorInput.addEventListener('input', () => {
+    author = authorInput.value;
+    if (selectedAuthor && author.trim().toLowerCase() !== selectedAuthor.toLowerCase()) {
+      selectedAuthor = null; prefetchedBooks = [];
+    }
+    debouncedAuthorSearch(author);
+    renderDropdown();
+  });
+  titleInput.addEventListener('input', () => { title = titleInput.value; renderDropdown(); });
+  titleInput.addEventListener('focus', () => { renderDropdown(); });
+  authorInput.addEventListener('focus', () => { renderDropdown(); });
+
+  authorInput.focus();
+
+  async function selectAuthor(name) {
+    selectedAuthor = name;
+    authorInput.value = name;
+    author = name;
+    titleInput.focus();
+    const list = olAuthorBookCache.get(name.toLowerCase().trim()) || await olFetchAuthorBooks(name);
+    prefetchedBooks = filterAuthorBooks(list);
+    renderDropdown();
+  }
+
+  function renderDropdown() {
+    dd.innerHTML = '';
+    const active = document.activeElement === titleInput ? 'title' : 'author';
+    if (active === 'author' || !selectedAuthor) {
+      // Show author suggestions (library + OL)
+      const libraryAuthors = [...new Set(state.books.map(b => b.author).filter(Boolean))]
+        .filter(a => a.toLowerCase().includes(author.trim().toLowerCase()))
+        .slice(0, 5);
+      const seen = new Set();
+      for (const a of libraryAuthors) {
+        seen.add(a.toLowerCase());
+        const row = el('div', 'dd-row tap');
+        row.append(el('span', 'src', '📚'), el('span', 'name', a));
+        row.onclick = () => selectAuthor(a);
+        dd.appendChild(row);
+      }
+      for (const a of authorOLResults) {
+        if (seen.has(a.name.toLowerCase())) continue;
+        const row = el('div', 'dd-row tap');
+        row.append(
+          el('span', 'src', '🔍'),
+          el('span', 'name', a.name),
+          a.work_count ? el('span', 'meta', `· ${a.work_count} works`) : null
+        );
+        row.onclick = () => selectAuthor(a.name);
+        dd.appendChild(row);
+      }
+    } else if (active === 'title' && selectedAuthor) {
+      const q = title.trim().toLowerCase();
+      let books = prefetchedBooks;
+      if (q) books = books.filter(b => (b.title || '').toLowerCase().includes(q));
+      books = books.slice(0, 20);
+      if (books.length === 0) {
+        dd.appendChild(el('div', 'more-loading', 'No matching titles.'));
+      }
+      for (const b of books) {
+        const row = el('div', 'dd-row tap');
+        row.append(
+          coverElement({ title: b.title, coverURL: b.coverURL }, 'sm'),
+          el('span', 'name', b.title),
+          b.first_publish_year ? el('span', 'meta', String(b.first_publish_year)) : null,
+          el('span', 'plus', '+')
+        );
+        row.onclick = async () => {
+          await addBook({
+            title: b.title, author: selectedAuthor,
+            publicationYear: b.first_publish_year || null,
+            coverURL: b.coverURL || null
+          });
+          backdrop.remove(); closeModal();
+        };
+        dd.appendChild(row);
+      }
+    }
+  }
+  renderDropdown();
+
+  backdrop.appendChild(m);
+  backdrop.onclick = (e) => { if (e.target === backdrop) { backdrop.remove(); closeModal(); } };
+  openModal(backdrop);
+}
+
+// ---- Edit Book modal ----
+function openEditBookModal(book) {
+  const draft = {
+    title: book.title, author: book.author,
+    publicationYear: book.publicationYear,
+    status: book.status, isFavourite: book.isFavourite, coverURL: book.coverURL
+  };
+  const backdrop = el('div', 'modal-backdrop');
+  const m = el('div', 'modal');
+
+  const nav = el('div', 'nav'); nav.style.position = 'relative';
+  nav.append(
+    button('', 'Cancel', () => { backdrop.remove(); closeModal(); }),
+    el('div', 'nav-title', 'Edit Book'),
+    button('', 'Save', async () => {
+      if (!draft.title.trim()) return;
+      await updateBook(book, draft);
+      backdrop.remove(); closeModal();
+    })
+  );
+  m.appendChild(nav);
+
+  const form = el('div', 'form');
+
+  const sBook = el('div', 'form-section');
+  sBook.appendChild(el('h3', '', 'Book'));
+  const titleIn = el('input'); titleIn.type = 'text'; titleIn.value = draft.title; titleIn.placeholder = 'Title';
+  titleIn.addEventListener('input', () => draft.title = titleIn.value);
+  const authIn = el('input'); authIn.type = 'text'; authIn.value = draft.author; authIn.placeholder = 'Author';
+  authIn.addEventListener('input', () => draft.author = authIn.value);
+  const yearIn = el('input'); yearIn.type = 'number'; yearIn.value = draft.publicationYear || ''; yearIn.placeholder = 'Year';
+  yearIn.addEventListener('input', () => draft.publicationYear = parseInt(yearIn.value) || null);
+  sBook.appendChild(el('div', 'form-row', titleIn));
+  sBook.appendChild(el('div', 'form-row', authIn));
+  sBook.appendChild(el('div', 'form-row', yearIn));
+  form.appendChild(sBook);
+
+  // Status + Favourite
+  const sStatus = el('div', 'form-section');
+  sStatus.appendChild(el('h3', '', 'Status'));
+  const seg = el('div', 'seg picker-row');
+  STATUSES.forEach(s => {
+    const b = el('button', '', STATUS_LABEL[s]);
+    if (s === draft.status) b.classList.add('on');
+    b.onclick = () => { draft.status = s; [...seg.children].forEach(c => c.classList.remove('on')); b.classList.add('on'); };
+    seg.appendChild(b);
+  });
+  sStatus.appendChild(seg);
+  // Favourite toggle
+  const favRow = el('div', 'toggle-row');
+  favRow.append(el('span', '', 'Favourite'));
+  const sw = el('div', 'switch' + (draft.isFavourite ? ' on' : ''));
+  sw.onclick = () => { draft.isFavourite = !draft.isFavourite; sw.classList.toggle('on'); };
+  favRow.appendChild(sw);
+  sStatus.appendChild(favRow);
+  form.appendChild(sStatus);
+
+  // Dates (read-only)
+  const sDates = el('div', 'form-section');
+  sDates.appendChild(el('h3', '', 'Dates'));
+  const added = el('div', 'dates-row');
+  added.append(el('span', '', 'Added'), el('span', '', ddMmYyyy(book.addedAt)));
+  const modified = el('div', 'dates-row');
+  modified.append(el('span', '', 'Modified'), el('span', '', ddMmYyyy(book.statusChangedAt)));
+  sDates.append(added, modified);
+  form.appendChild(sDates);
+
+  m.appendChild(form);
+  backdrop.appendChild(m);
+  backdrop.onclick = (e) => { if (e.target === backdrop) { backdrop.remove(); closeModal(); } };
+  openModal(backdrop);
 }
 
 // =====================================================================
@@ -1279,7 +1112,6 @@ function addLongPressOrSwipeDelete(row, action) {
       try {
         state.loading = true; render();
         await exchangeAuthCode(code);
-        // Clean code out of URL
         url.searchParams.delete('code');
         url.searchParams.delete('state');
         window.history.replaceState({}, '', url.pathname + (url.search ? '?' + url.searchParams.toString() : ''));
@@ -1290,9 +1122,9 @@ function addLongPressOrSwipeDelete(row, action) {
       }
     }
     if (loadRefreshToken()) {
-      state.view = 'shops';
+      state.view = 'main';
       render();
-      await loadAll();
+      await loadBooks();
     } else {
       state.view = 'signin';
       render();
