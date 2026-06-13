@@ -408,6 +408,40 @@ const DEFAULT_TRAVEL_CATEGORIES = [
 const UNIT_SYMBOL = { count: '×', gram: 'g', kilo: 'kg' };
 
 // =====================================================================
+// Shop logo presets
+// Original simple designs (colored circle + letter / generic symbol) —
+// inspired by each shop's identity but not reproductions of any logo.
+// =====================================================================
+const SHOP_PRESETS = [
+  { key: 'preset:delhaize', name: 'Delhaize', bg: '#D60D1A', text: 'D', font: 'heavy', isSymbol: false },
+  { key: 'preset:colruyt',  name: 'Colruyt',  bg: '#D91A1A', text: 'C', font: 'heavy', isSymbol: false },
+  { key: 'preset:walvis',   name: 'De Walvis', bg: '#0F4F8C', text: '🐋', font: '',     isSymbol: true },
+  { key: 'preset:wikke',    name: 'De Wikke',  bg: '#338C40', text: '🌿', font: '',     isSymbol: true }
+];
+function shopPresetFor(key) { return SHOP_PRESETS.find(p => p.key === key); }
+function renderShopIcon(identifier, size = 36) {
+  const wrap = el('div', 'shop-icon');
+  wrap.style.cssText = `width:${size}px;height:${size}px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:0 0 ${size}px;`;
+  const preset = shopPresetFor(identifier);
+  if (preset) {
+    wrap.style.background = preset.bg;
+    wrap.style.color = '#fff';
+    if (preset.isSymbol) {
+      wrap.style.fontSize = (size * 0.55) + 'px';
+    } else {
+      wrap.style.fontSize = (size * 0.55) + 'px';
+      wrap.style.fontWeight = '800';
+    }
+    wrap.textContent = preset.text;
+  } else {
+    wrap.style.background = 'var(--bg-tert)';
+    wrap.style.fontSize = (size * 0.55) + 'px';
+    wrap.textContent = identifier || '🛒';
+  }
+  return wrap;
+}
+
+// =====================================================================
 // Book status metadata
 // =====================================================================
 const STATUSES = ['toFind', 'toRead', 'read', 'stopped'];
@@ -1297,7 +1331,7 @@ function shoppingHomeScreen() {
       const row = el('div', 'row tap');
       row.onclick = () => navTo({ v: 'shop', id: shop.id });
       row.append(
-        el('div', 'shop-emoji', shop.emoji),
+        renderShopIcon(shop.emoji, 36),
         el('div', 'grow',
           el('div', '', shop.name),
           el('div', 'muted', `${shop.items.length} item${shop.items.length === 1 ? '' : 's'}`)
@@ -1328,11 +1362,40 @@ function openNewShopModal() {
   const s1 = el('div', 'form-section'); s1.appendChild(el('h3', '', 'Name'));
   const nIn = el('input'); nIn.type = 'text'; nIn.addEventListener('input', () => name = nIn.value);
   s1.appendChild(el('div', 'form-row', nIn));
-  const s2 = el('div', 'form-section'); s2.appendChild(el('h3', '', 'Icon (emoji)'));
-  const eIn = el('input'); eIn.type = 'text'; eIn.value = emoji; eIn.style.fontSize = '24px'; eIn.style.maxWidth = '120px';
-  eIn.addEventListener('input', () => { emoji = [...eIn.value].pop() || '🛒'; });
-  s2.appendChild(el('div', 'form-row', eIn));
-  form.append(s1, s2);
+
+  const sP = el('div', 'form-section'); sP.appendChild(el('h3', '', 'Shop Preset'));
+  const presetRow = el('div');
+  presetRow.style.cssText = 'display:flex;gap:14px;overflow-x:auto;padding:8px 16px 12px;';
+  function rebuildPresets() {
+    presetRow.innerHTML = '';
+    SHOP_PRESETS.forEach(p => {
+      const wrap = el('div');
+      wrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;flex:0 0 auto;';
+      const icon = renderShopIcon(p.key, 44);
+      if (emoji === p.key) icon.style.boxShadow = '0 0 0 2.5px var(--tint)';
+      const lbl = el('div', 'muted', p.name);
+      lbl.style.fontSize = '11px';
+      wrap.append(icon, lbl);
+      wrap.onclick = () => { emoji = p.key; eIn.value = ''; rebuildPresets(); refreshHint(); };
+      presetRow.appendChild(wrap);
+    });
+  }
+  rebuildPresets();
+  sP.appendChild(presetRow);
+
+  const sE = el('div', 'form-section'); sE.appendChild(el('h3', '', 'Or Emoji'));
+  const eIn = el('input'); eIn.type = 'text'; eIn.placeholder = emoji; eIn.style.fontSize = '24px'; eIn.style.maxWidth = '120px';
+  eIn.addEventListener('input', () => { const v = [...eIn.value].pop() || '🛒'; emoji = v; rebuildPresets(); refreshHint(); });
+  sE.appendChild(el('div', 'form-row', eIn));
+  const hint = el('div', 'helper-tip', '');
+  function refreshHint() {
+    const p = shopPresetFor(emoji);
+    hint.textContent = p ? `Using preset: ${p.name}` : '';
+  }
+  refreshHint();
+  sE.appendChild(hint);
+
+  form.append(s1, sP, sE);
   m.appendChild(form);
   backdrop.appendChild(m);
   backdrop.onclick = (e) => { if (e.target === backdrop) close(); };
