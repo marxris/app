@@ -1297,7 +1297,6 @@ function shoppingHomeScreen() {
       const row = el('div', 'row tap');
       row.onclick = () => navTo({ v: 'shop', id: shop.id });
       row.append(
-        el('div', 'shop-emoji', shop.emoji),
         el('div', 'grow',
           el('div', '', shop.name),
           el('div', 'muted', `${shop.items.length} item${shop.items.length === 1 ? '' : 's'}`)
@@ -1316,23 +1315,19 @@ function shoppingHomeScreen() {
 }
 
 function openNewShopModal() {
-  let name = '', emoji = '🛒';
+  let name = '';
   const backdrop = el('div', 'modal-backdrop');
   const m = el('div', 'modal');
   const close = () => { backdrop.remove(); closeModal(); };
   const nav = el('div', 'nav');
   nav.append(button('', 'Cancel', close), el('div', 'nav-title', 'New Shop'),
-    button('', 'Save', async () => { if (!name.trim()) return; await addShop(name, emoji); close(); }));
+    button('', 'Save', async () => { if (!name.trim()) return; await addShop(name, ''); close(); }));
   m.appendChild(nav);
   const form = el('div', 'form');
   const s1 = el('div', 'form-section'); s1.appendChild(el('h3', '', 'Name'));
   const nIn = el('input'); nIn.type = 'text'; nIn.addEventListener('input', () => name = nIn.value);
   s1.appendChild(el('div', 'form-row', nIn));
-  const s2 = el('div', 'form-section'); s2.appendChild(el('h3', '', 'Icon (emoji)'));
-  const eIn = el('input'); eIn.type = 'text'; eIn.value = emoji; eIn.style.fontSize = '24px'; eIn.style.maxWidth = '120px';
-  eIn.addEventListener('input', () => { emoji = [...eIn.value].pop() || '🛒'; });
-  s2.appendChild(el('div', 'form-row', eIn));
-  form.append(s1, s2);
+  form.append(s1);
   m.appendChild(form);
   backdrop.appendChild(m);
   backdrop.onclick = (e) => { if (e.target === backdrop) close(); };
