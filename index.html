@@ -177,6 +177,15 @@
   .hist-cell.added { background: var(--bg-tert); color: var(--text-2); cursor: default; }
   .hist-cell .h-name { font-weight: 500; font-size: 14px; }
   .hist-cell .h-qty { font-size: 11px; color: var(--text-2); }
+  .found-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px; }
+  .found-cell {
+    padding: 10px; border-radius: 10px;
+    display: flex; flex-direction: column; gap: 4px; align-items: flex-start;
+    background: color-mix(in srgb, var(--green) 14%, transparent);
+    color: var(--green); text-align: left; cursor: pointer; font: inherit; border: 0;
+  }
+  .found-cell .h-name { font-weight: 500; font-size: 14px; }
+  .found-cell .h-qty { font-size: 11px; color: color-mix(in srgb, var(--green) 70%, var(--text-2)); }
 
   /* Books */
   .filter-row { display: flex; gap: 8px; padding: 8px 12px; overflow-x: auto; align-items: center; }
@@ -636,7 +645,7 @@ function freshState() {
     nav: ['main'],
     error: null, loading: false,
     // Shopping
-    shops: [], shopCats: [], history: [],
+    shops: [], shopCats: [], history: [], shopFoundFilter: 'all',
     // Books
     books: [], bookFilter: null, showFavOnly: false, expanded: new Set(),
     // Expenses
@@ -1443,7 +1452,6 @@ function shopItemsList(shop) {
     sections.push({ title: k, icon: '', items: grouped[k] });
   }
   if (grouped['__uncat__']) sections.push({ title: UNCAT, icon: '', items: grouped['__uncat__'] });
-  if (checked.length > 0) sections.push({ title: 'Found', icon: '✅', items: checked });
 
   for (const sec of sections) {
     list.appendChild(el('div', 'section-title', sec.icon ? `${sec.icon} ${sec.title}` : sec.title));
@@ -1451,7 +1459,48 @@ function shopItemsList(shop) {
     for (const it of sec.items) card.appendChild(shopItemRow(shop, it));
     list.appendChild(card);
   }
+  if (checked.length > 0) list.appendChild(buildFoundSection(shop, checked));
   return list;
+}
+
+function buildFoundSection(shop, checked) {
+  const wrap = el('div');
+  wrap.appendChild(el('div', 'section-title', '✅ Found'));
+  const usedCats = new Set(checked.map(i => i.category).filter(Boolean));
+  const hasUncat = checked.some(i => !i.category);
+  const filter = state.shopFoundFilter || 'all';
+  if (usedCats.size > 0 || hasUncat) {
+    const filterRow = el('div', 'hist-filter-row');
+    for (const c of state.shopCats) {
+      if (!usedCats.has(c.name)) continue;
+      const chip = button('hist-chip', SHOPPING_ICONS[c.icon] || c.name[0], () => {
+        state.shopFoundFilter = filter === `cat:${c.name}` ? 'all' : `cat:${c.name}`;
+        render();
+      });
+      if (filter === `cat:${c.name}`) chip.classList.add('on');
+      filterRow.appendChild(chip);
+    }
+    if (hasUncat) {
+      const chip = button('hist-chip', UNCAT, () => {
+        state.shopFoundFilter = filter === 'uncat' ? 'all' : 'uncat';
+        render();
+      });
+      if (filter === 'uncat') chip.classList.add('on');
+      filterRow.appendChild(chip);
+    }
+    wrap.appendChild(filterRow);
+  }
+  let items = checked;
+  if (filter.startsWith('cat:')) items = items.filter(i => i.category === filter.slice(4));
+  else if (filter === 'uncat') items = items.filter(i => !i.category);
+  const grid = el('div', 'found-grid');
+  for (const it of items) {
+    const cell = button('found-cell', '', () => toggleItem(shop.id, it.id));
+    cell.append(el('div', 'h-name', it.name), el('div', 'h-qty', quantityDisplay(it.quantity)));
+    grid.appendChild(cell);
+  }
+  wrap.appendChild(grid);
+  return wrap;
 }
 
 function shopItemRow(shop, item) {
