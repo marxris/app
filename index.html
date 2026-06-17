@@ -1465,7 +1465,7 @@ function shopItemsList(shop) {
 
 function buildFoundSection(shop, checked) {
   const wrap = el('div');
-  wrap.appendChild(el('div', 'section-title', '✅ Found'));
+  wrap.appendChild(el('div', 'section-title', '✅ Keuzelijst'));
   const usedCats = new Set(checked.map(i => i.category).filter(Boolean));
   const hasUncat = checked.some(i => !i.category);
   const filter = state.shopFoundFilter || 'all';
