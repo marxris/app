@@ -1321,10 +1321,11 @@ function shoppingHomeScreen() {
     state.shops.forEach(shop => {
       const row = el('div', 'row tap');
       row.onclick = () => navTo({ v: 'shop', id: shop.id });
+      const activeCount = shop.items.filter(i => !i.isChecked).length;
       row.append(
         el('div', 'grow',
           el('div', '', shop.name),
-          el('div', 'muted', `${shop.items.length} item${shop.items.length === 1 ? '' : 's'}`)
+          el('div', 'muted', `${activeCount} item${activeCount === 1 ? '' : 's'}`)
         ),
         button('danger', '✕', (e) => { e.stopPropagation(); if (confirm(`Delete "${shop.name}"?`)) deleteShop(shop.id); }),
         el('div', 'chev', '›')
