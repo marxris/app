@@ -182,10 +182,10 @@
     padding: 10px; border-radius: 10px;
     display: flex; flex-direction: column; gap: 4px; align-items: flex-start;
     background: color-mix(in srgb, var(--green) 14%, transparent);
-    color: var(--green); text-align: left; cursor: pointer; font: inherit; border: 0;
+    color: var(--text); text-align: left; cursor: pointer; font: inherit; border: 0;
   }
   .found-cell .h-name { font-weight: 500; font-size: 14px; }
-  .found-cell .h-qty { font-size: 11px; color: color-mix(in srgb, var(--green) 70%, var(--text-2)); }
+  .found-cell .h-qty { font-size: 11px; color: var(--text-2); }
 
   /* Books */
   .filter-row { display: flex; gap: 8px; padding: 8px 12px; overflow-x: auto; align-items: center; }
@@ -778,6 +778,7 @@ function toggleItem(shopId, id) {
   const sh = shopById(shopId); if (!sh) return;
   const it = sh.items.find(i => i.id === id); if (!it) return;
   it.isChecked = !it.isChecked;
+  it.checkedAt = it.isChecked ? new Date().toISOString() : null;
   if (it.isChecked) upsertHistory(it);
   render();
   saveShops();
@@ -1494,6 +1495,7 @@ function buildFoundSection(shop, checked) {
   let items = checked;
   if (filter.startsWith('cat:')) items = items.filter(i => i.category === filter.slice(4));
   else if (filter === 'uncat') items = items.filter(i => !i.category);
+  items = items.slice().sort((a, b) => (b.checkedAt || '').localeCompare(a.checkedAt || ''));
   const grid = el('div', 'found-grid');
   for (const it of items) {
     const cell = button('found-cell', '', () => toggleItem(shop.id, it.id));
