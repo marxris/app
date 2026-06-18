@@ -734,9 +734,9 @@ function normaliseTravelItem(it) {
 // =====================================================================
 // Persistence helpers
 // =====================================================================
-async function saveShops() { try { await dbxWriteJSON(PATHS.shops, state.shops); } catch (e) { state.error = e.message; } }
-async function saveShopCats() { try { await dbxWriteJSON(PATHS.shopCats, state.shopCats); } catch (e) { state.error = e.message; } }
-async function saveHistory() { try { await dbxWriteJSON(PATHS.history, state.history); } catch (e) { state.error = e.message; } }
+async function saveShops() { try { await dbxWriteJSON(PATHS.shops, state.shops); } catch (e) { state.error = e.message; render(); } }
+async function saveShopCats() { try { await dbxWriteJSON(PATHS.shopCats, state.shopCats); } catch (e) { state.error = e.message; render(); } }
+async function saveHistory() { try { await dbxWriteJSON(PATHS.history, state.history); } catch (e) { state.error = e.message; render(); } }
 async function saveBooks() { try { await dbxWriteJSON(PATHS.books, state.books); } catch (e) { state.error = e.message; render(); } }
 async function saveExpenses() { try { await dbxWriteJSON(PATHS.expenses, state.expenses); } catch (e) { state.error = e.message; render(); } }
 async function saveTrips() { try { await dbxWriteJSON(PATHS.trips, state.trips); } catch (e) { state.error = e.message; render(); } }
@@ -774,14 +774,14 @@ async function deleteItem(shopId, id) {
   sh.items = sh.items.filter(i => i.id !== id);
   await saveShops(); render();
 }
-async function toggleItem(shopId, id) {
+function toggleItem(shopId, id) {
   const sh = shopById(shopId); if (!sh) return;
   const it = sh.items.find(i => i.id === id); if (!it) return;
   it.isChecked = !it.isChecked;
   if (it.isChecked) upsertHistory(it);
-  await saveShops();
-  if (it.isChecked) await saveHistory();
   render();
+  saveShops();
+  if (it.isChecked) saveHistory();
 }
 async function clearChecked(shopId) {
   const sh = shopById(shopId); if (!sh) return;
