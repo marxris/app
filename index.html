@@ -1132,13 +1132,13 @@ function render() {
   } else {
     const route = currentRoute();
     if (route === 'main') main = mainScreen();
-    else if (route === 'shopping') { ensureSectionLoaded('shopping'); main = state.loaded.shopping ? shoppingHomeScreen() : loadingScreen('Shopping'); }
-    else if (route === 'books') { ensureSectionLoaded('books'); main = state.loaded.books ? booksScreen() : loadingScreen('Books'); }
-    else if (route === 'expenses') { ensureSectionLoaded('expenses'); main = state.loaded.expenses ? expensesScreen() : loadingScreen('Expenses'); }
-    else if (route === 'travel') { ensureSectionLoaded('travel'); main = state.loaded.travel ? travelHomeScreen() : loadingScreen('Travel'); }
-    else if (route && route.v === 'shop') { ensureSectionLoaded('shopping'); main = state.loaded.shopping ? shopDetailScreen(route.id) : loadingScreen('Shopping'); }
-    else if (route && route.v === 'trip') { ensureSectionLoaded('travel'); main = state.loaded.travel ? tripDetailScreen(route.id) : loadingScreen('Travel'); }
-    else if (route && route.v === 'template') { ensureSectionLoaded('travel'); main = state.loaded.travel ? templateDetailScreen(route.id) : loadingScreen('Travel'); }
+    else if (route === 'shopping') { ensureSectionLoaded('shopping'); main = shoppingHomeScreen(); }
+    else if (route === 'books') { ensureSectionLoaded('books'); main = booksScreen(); }
+    else if (route === 'expenses') { ensureSectionLoaded('expenses'); main = expensesScreen(); }
+    else if (route === 'travel') { ensureSectionLoaded('travel'); main = travelHomeScreen(); }
+    else if (route && route.v === 'shop') { ensureSectionLoaded('shopping'); main = shopDetailScreen(route.id); }
+    else if (route && route.v === 'trip') { ensureSectionLoaded('travel'); main = tripDetailScreen(route.id); }
+    else if (route && route.v === 'template') { ensureSectionLoaded('travel'); main = templateDetailScreen(route.id); }
     else main = mainScreen();
   }
   root.appendChild(main);
@@ -1195,14 +1195,6 @@ function tile(klass, icon, name, onclick) {
   t.append(el('div', 'tile-icon', icon), el('div', 'tile-name', name));
   t.onclick = onclick;
   return t;
-}
-function loadingScreen(title) {
-  const wrap = el('div'); wrap.style.display = 'flex'; wrap.style.flexDirection = 'column'; wrap.style.flex = '1';
-  wrap.appendChild(navWith(title, { back: navBack }));
-  const scroll = el('div', 'scroll');
-  scroll.appendChild(el('div', 'empty', el('div', 'e-icon', '⏳'), el('div', '', el('strong', '', 'Loading…'))));
-  wrap.appendChild(scroll);
-  return wrap;
 }
 function navWith(title, opts = {}) {
   const nav = el('div', 'nav');
