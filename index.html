@@ -671,6 +671,7 @@ function freshState() {
     view: 'signin',
     nav: ['main'],
     error: null, loading: false,
+    loaded: { shopping: false, books: false, expenses: false, travel: false },
     // Shopping
     shops: [], shopCats: [], history: [], shopFoundFilter: 'all',
     // Books
@@ -689,56 +690,78 @@ function normaliseCategory(c, defaultIcon) {
   return { id: c.id || cryptoUUID(), name: c.name, icon: c.icon || defaultIcon };
 }
 
-async function loadAll() {
-  state.loading = true; render();
-  try {
-    const shops      = await dbxReadJSON(PATHS.shops);
-    const shopCats   = await dbxReadJSON(PATHS.shopCats);
-    const history    = await dbxReadJSON(PATHS.history);
-    const books      = await dbxReadJSON(PATHS.books);
-    const expenses   = await dbxReadJSON(PATHS.expenses);
-    const trips      = await dbxReadJSON(PATHS.trips);
-    const templates  = await dbxReadJSON(PATHS.templates);
-    const travelCats = await dbxReadJSON(PATHS.travelCats);
-    state.shops = shops || [];
-    state.shopCats = (shopCats || DEFAULT_SHOP_CATEGORIES).map(c => normaliseCategory(c, SHOPPING_DEFAULT_ICON));
-    state.history = (history || []).sort((a, b) => new Date(b.lastUsedAt) - new Date(a.lastUsedAt));
+async function loadShoppingData() {
+  const shops    = await dbxReadJSON(PATHS.shops);
+  const shopCats = await dbxReadJSON(PATHS.shopCats);
+  const history  = await dbxReadJSON(PATHS.history);
+  state.shops = shops || [];
+  state.shopCats = (shopCats || DEFAULT_SHOP_CATEGORIES).map(c => normaliseCategory(c, SHOPPING_DEFAULT_ICON));
+  state.history = (history || []).sort((a, b) => new Date(b.lastUsedAt) - new Date(a.lastUsedAt));
+}
+async function loadBooksData() {
+  const books = await dbxReadJSON(PATHS.books);
+  state.books = (books || []).map(b => {
+    const status = b.status === 'reading' ? 'toRead' : (STATUSES.includes(b.status) ? b.status : 'toFind');
+    return {
+      id: b.id || cryptoUUID(), title: b.title || '', author: b.author || '',
+      publicationYear: b.publicationYear ?? null, coverURL: b.coverURL || null, status,
+      addedAt: b.addedAt || new Date().toISOString(),
+      statusChangedAt: b.statusChangedAt || b.addedAt || new Date().toISOString(),
+      isFavourite: !!b.isFavourite
+    };
+  });
+}
+async function loadExpensesData() {
+  const expenses = await dbxReadJSON(PATHS.expenses);
+  state.expenses = (expenses || []).map(e => ({
+    id: e.id || cryptoUUID(),
+    title: e.title || e.note || '',
+    amount: e.amount || 0,
+    owner: e.owner || 'c',
+    createdAt: e.createdAt || e.date || new Date().toISOString()
+  })).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+}
+async function loadTravelData() {
+  const trips      = await dbxReadJSON(PATHS.trips);
+  const templates  = await dbxReadJSON(PATHS.templates);
+  const travelCats = await dbxReadJSON(PATHS.travelCats);
+  state.trips = (trips || []).map(t => ({
+    id: t.id || cryptoUUID(), name: t.name || '',
+    items: (t.items || []).map(normaliseTravelItem),
+    createdAt: t.createdAt || new Date().toISOString()
+  })).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  state.templates = (templates || []).map(t => ({
+    id: t.id || cryptoUUID(), name: t.name || '',
+    items: (t.items || []).map(normaliseTravelItem)
+  }));
+  state.travelCats = (travelCats || DEFAULT_TRAVEL_CATEGORIES).map(c => normaliseCategory(c, TRAVEL_DEFAULT_ICON));
+}
 
-    state.books = (books || []).map(b => {
-      const status = b.status === 'reading' ? 'toRead' : (STATUSES.includes(b.status) ? b.status : 'toFind');
-      return {
-        id: b.id || cryptoUUID(), title: b.title || '', author: b.author || '',
-        publicationYear: b.publicationYear ?? null, coverURL: b.coverURL || null, status,
-        addedAt: b.addedAt || new Date().toISOString(),
-        statusChangedAt: b.statusChangedAt || b.addedAt || new Date().toISOString(),
-        isFavourite: !!b.isFavourite
-      };
-    });
-
-    state.expenses = (expenses || []).map(e => ({
-      id: e.id || cryptoUUID(),
-      title: e.title || e.note || '',
-      amount: e.amount || 0,
-      owner: e.owner || 'c',
-      createdAt: e.createdAt || e.date || new Date().toISOString()
-    })).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-    state.trips = (trips || []).map(t => ({
-      id: t.id || cryptoUUID(), name: t.name || '',
-      items: (t.items || []).map(normaliseTravelItem),
-      createdAt: t.createdAt || new Date().toISOString()
-    })).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    state.templates = (templates || []).map(t => ({
-      id: t.id || cryptoUUID(), name: t.name || '',
-      items: (t.items || []).map(normaliseTravelItem)
-    }));
-    state.travelCats = (travelCats || DEFAULT_TRAVEL_CATEGORIES).map(c => normaliseCategory(c, TRAVEL_DEFAULT_ICON));
-  } catch (e) {
-    state.error = e.message;
-  } finally {
-    state.loading = false;
-    render();
-  }
+const SECTION_LOADERS = {
+  shopping: loadShoppingData,
+  books:    loadBooksData,
+  expenses: loadExpensesData,
+  travel:   loadTravelData
+};
+const inflightSection = {};
+function ensureSectionLoaded(name) {
+  if (state.loaded[name]) return;
+  if (inflightSection[name]) return;
+  const loader = SECTION_LOADERS[name];
+  if (!loader) return;
+  inflightSection[name] = (async () => {
+    state.loading = true; render();
+    try {
+      await loader();
+      state.loaded[name] = true;
+    } catch (e) {
+      state.error = e.message;
+    } finally {
+      state.loading = false;
+      delete inflightSection[name];
+      render();
+    }
+  })();
 }
 
 function normaliseTravelItem(it) {
@@ -1109,13 +1132,13 @@ function render() {
   } else {
     const route = currentRoute();
     if (route === 'main') main = mainScreen();
-    else if (route === 'shopping') main = shoppingHomeScreen();
-    else if (route === 'books') main = booksScreen();
-    else if (route === 'expenses') main = expensesScreen();
-    else if (route === 'travel') main = travelHomeScreen();
-    else if (route && route.v === 'shop') main = shopDetailScreen(route.id);
-    else if (route && route.v === 'trip') main = tripDetailScreen(route.id);
-    else if (route && route.v === 'template') main = templateDetailScreen(route.id);
+    else if (route === 'shopping') { ensureSectionLoaded('shopping'); main = shoppingHomeScreen(); }
+    else if (route === 'books') { ensureSectionLoaded('books'); main = booksScreen(); }
+    else if (route === 'expenses') { ensureSectionLoaded('expenses'); main = expensesScreen(); }
+    else if (route === 'travel') { ensureSectionLoaded('travel'); main = travelHomeScreen(); }
+    else if (route && route.v === 'shop') { ensureSectionLoaded('shopping'); main = shopDetailScreen(route.id); }
+    else if (route && route.v === 'trip') { ensureSectionLoaded('travel'); main = tripDetailScreen(route.id); }
+    else if (route && route.v === 'template') { ensureSectionLoaded('travel'); main = templateDetailScreen(route.id); }
     else main = mainScreen();
   }
   root.appendChild(main);
@@ -2516,7 +2539,6 @@ function openTravelItemEditor({ mode, tripId, templateId, item }) {
     }
     if (loadRefreshToken()) {
       state.view = 'main'; render();
-      await loadAll();
     } else {
       state.view = 'signin'; render();
     }
