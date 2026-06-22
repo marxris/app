@@ -749,8 +749,8 @@ function ensureSectionLoaded(name) {
   if (inflightSection[name]) return;
   const loader = SECTION_LOADERS[name];
   if (!loader) return;
+  state.loading = true;
   inflightSection[name] = (async () => {
-    state.loading = true; render();
     try {
       await loader();
       state.loaded[name] = true;
