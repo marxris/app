@@ -528,12 +528,18 @@ async function exchangeAuthCode(code) {
   const verifier = sessionStorage.getItem('pkce.verifier');
   sessionStorage.removeItem('pkce.verifier');
   if (!verifier) throw new Error('Missing PKCE verifier — start sign-in from this device.');
-  const resp = await fetch('https://api.dropboxapi.com/oauth2/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ code, grant_type: 'authorization_code', client_id: APP_KEY, redirect_uri: REDIRECT_URI, code_verifier: verifier }).toString()
-  });
-  if (!resp.ok) throw new Error('Token exchange failed: ' + await resp.text());
+  let resp;
+  try {
+    resp = await fetch('https://api.dropboxapi.com/oauth2/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ code, grant_type: 'authorization_code', client_id: APP_KEY, redirect_uri: REDIRECT_URI, code_verifier: verifier }).toString()
+    });
+  } catch (e) {
+    console.error('exchangeAuthCode fetch rejected', e);
+    throw new Error(`Code exchange: ${e.name || 'Error'} — ${e.message}`);
+  }
+  if (!resp.ok) throw new Error('Code exchange: HTTP ' + resp.status + ' — ' + await resp.text());
   const j = await resp.json();
   accessToken = j.access_token;
   accessTokenExp = Date.now() + (j.expires_in - 60) * 1000;
@@ -542,12 +548,18 @@ async function exchangeAuthCode(code) {
 async function refreshAccessToken() {
   const refresh = loadRefreshToken();
   if (!refresh) throw new Error('Not authenticated.');
-  const resp = await fetch('https://api.dropboxapi.com/oauth2/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ grant_type: 'refresh_token', refresh_token: refresh, client_id: APP_KEY }).toString()
-  });
-  if (!resp.ok) { clearRefreshToken(); throw new Error('Refresh failed: ' + await resp.text()); }
+  let resp;
+  try {
+    resp = await fetch('https://api.dropboxapi.com/oauth2/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ grant_type: 'refresh_token', refresh_token: refresh, client_id: APP_KEY }).toString()
+    });
+  } catch (e) {
+    console.error('refreshAccessToken fetch rejected', e);
+    throw new Error(`Token refresh: ${e.name || 'Error'} — ${e.message}`);
+  }
+  if (!resp.ok) { clearRefreshToken(); throw new Error('Token refresh: HTTP ' + resp.status + ' — ' + await resp.text()); }
   const j = await resp.json();
   accessToken = j.access_token;
   accessTokenExp = Date.now() + (j.expires_in - 60) * 1000;
@@ -570,27 +582,39 @@ function signOut() {
 // =====================================================================
 async function dbxReadJSON(path) {
   const token = await ensureAccessToken();
-  const resp = await fetch('https://content.dropboxapi.com/2/files/download', {
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${token}`, 'Dropbox-API-Arg': JSON.stringify({ path }) }
-  });
+  let resp;
+  try {
+    resp = await fetch('https://content.dropboxapi.com/2/files/download', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}`, 'Dropbox-API-Arg': JSON.stringify({ path }) }
+    });
+  } catch (e) {
+    console.error('dbxReadJSON fetch rejected for', path, e);
+    throw new Error(`Read ${path}: ${e.name || 'Error'} — ${e.message}`);
+  }
   if (resp.status === 409) return null;
-  if (!resp.ok) throw new Error('Download failed: ' + await resp.text());
+  if (!resp.ok) throw new Error(`Read ${path}: HTTP ${resp.status} — ` + await resp.text());
   return JSON.parse(await resp.text());
 }
 async function dbxWriteJSON(path, value) {
   const token = await ensureAccessToken();
   const arg = { path, mode: 'overwrite', autorename: false, mute: true, strict_conflict: false };
-  const resp = await fetch('https://content.dropboxapi.com/2/files/upload', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/octet-stream',
-      'Dropbox-API-Arg': JSON.stringify(arg)
-    },
-    body: JSON.stringify(value, null, 2)
-  });
-  if (!resp.ok) throw new Error('Upload failed: ' + await resp.text());
+  let resp;
+  try {
+    resp = await fetch('https://content.dropboxapi.com/2/files/upload', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/octet-stream',
+        'Dropbox-API-Arg': JSON.stringify(arg)
+      },
+      body: JSON.stringify(value, null, 2)
+    });
+  } catch (e) {
+    console.error('dbxWriteJSON fetch rejected for', path, e);
+    throw new Error(`Write ${path}: ${e.name || 'Error'} — ${e.message}`);
+  }
+  if (!resp.ok) throw new Error(`Write ${path}: HTTP ${resp.status} — ` + await resp.text());
 }
 
 // =====================================================================
