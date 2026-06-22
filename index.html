@@ -531,7 +531,7 @@ async function exchangeAuthCode(code) {
   const resp = await fetch('https://api.dropboxapi.com/oauth2/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ code, grant_type: 'authorization_code', client_id: APP_KEY, redirect_uri: REDIRECT_URI, code_verifier: verifier })
+    body: new URLSearchParams({ code, grant_type: 'authorization_code', client_id: APP_KEY, redirect_uri: REDIRECT_URI, code_verifier: verifier }).toString()
   });
   if (!resp.ok) throw new Error('Token exchange failed: ' + await resp.text());
   const j = await resp.json();
@@ -545,7 +545,7 @@ async function refreshAccessToken() {
   const resp = await fetch('https://api.dropboxapi.com/oauth2/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ grant_type: 'refresh_token', refresh_token: refresh, client_id: APP_KEY })
+    body: new URLSearchParams({ grant_type: 'refresh_token', refresh_token: refresh, client_id: APP_KEY }).toString()
   });
   if (!resp.ok) { clearRefreshToken(); throw new Error('Refresh failed: ' + await resp.text()); }
   const j = await resp.json();
