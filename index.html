@@ -580,18 +580,27 @@ function signOut() {
 // =====================================================================
 // Dropbox JSON
 // =====================================================================
+async function fetchWithRetry(url, opts, label) {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      return await fetch(url, opts);
+    } catch (e) {
+      if (attempt === 0) {
+        console.warn(`${label} fetch rejected, retrying`, e);
+        await new Promise(r => setTimeout(r, 300));
+        continue;
+      }
+      console.error(`${label} fetch rejected (final)`, e);
+      throw new Error(`${label}: ${e.name || 'Error'} — ${e.message}`);
+    }
+  }
+}
 async function dbxReadJSON(path) {
   const token = await ensureAccessToken();
-  let resp;
-  try {
-    resp = await fetch('https://content.dropboxapi.com/2/files/download', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${token}`, 'Dropbox-API-Arg': JSON.stringify({ path }) }
-    });
-  } catch (e) {
-    console.error('dbxReadJSON fetch rejected for', path, e);
-    throw new Error(`Read ${path}: ${e.name || 'Error'} — ${e.message}`);
-  }
+  const resp = await fetchWithRetry('https://content.dropboxapi.com/2/files/download', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}`, 'Dropbox-API-Arg': JSON.stringify({ path }) }
+  }, `Read ${path}`);
   if (resp.status === 409) return null;
   if (!resp.ok) throw new Error(`Read ${path}: HTTP ${resp.status} — ` + await resp.text());
   return JSON.parse(await resp.text());
@@ -599,21 +608,15 @@ async function dbxReadJSON(path) {
 async function dbxWriteJSON(path, value) {
   const token = await ensureAccessToken();
   const arg = { path, mode: 'overwrite', autorename: false, mute: true, strict_conflict: false };
-  let resp;
-  try {
-    resp = await fetch('https://content.dropboxapi.com/2/files/upload', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/octet-stream',
-        'Dropbox-API-Arg': JSON.stringify(arg)
-      },
-      body: JSON.stringify(value, null, 2)
-    });
-  } catch (e) {
-    console.error('dbxWriteJSON fetch rejected for', path, e);
-    throw new Error(`Write ${path}: ${e.name || 'Error'} — ${e.message}`);
-  }
+  const resp = await fetchWithRetry('https://content.dropboxapi.com/2/files/upload', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/octet-stream',
+      'Dropbox-API-Arg': JSON.stringify(arg)
+    },
+    body: JSON.stringify(value, null, 2)
+  }, `Write ${path}`);
   if (!resp.ok) throw new Error(`Write ${path}: HTTP ${resp.status} — ` + await resp.text());
 }
 
@@ -689,17 +692,14 @@ function normaliseCategory(c, defaultIcon) {
 async function loadAll() {
   state.loading = true; render();
   try {
-    const [
-      shops, shopCats, history,
-      books,
-      expenses,
-      trips, templates, travelCats
-    ] = await Promise.all([
-      dbxReadJSON(PATHS.shops), dbxReadJSON(PATHS.shopCats), dbxReadJSON(PATHS.history),
-      dbxReadJSON(PATHS.books),
-      dbxReadJSON(PATHS.expenses),
-      dbxReadJSON(PATHS.trips), dbxReadJSON(PATHS.templates), dbxReadJSON(PATHS.travelCats)
-    ]);
+    const shops      = await dbxReadJSON(PATHS.shops);
+    const shopCats   = await dbxReadJSON(PATHS.shopCats);
+    const history    = await dbxReadJSON(PATHS.history);
+    const books      = await dbxReadJSON(PATHS.books);
+    const expenses   = await dbxReadJSON(PATHS.expenses);
+    const trips      = await dbxReadJSON(PATHS.trips);
+    const templates  = await dbxReadJSON(PATHS.templates);
+    const travelCats = await dbxReadJSON(PATHS.travelCats);
     state.shops = shops || [];
     state.shopCats = (shopCats || DEFAULT_SHOP_CATEGORIES).map(c => normaliseCategory(c, SHOPPING_DEFAULT_ICON));
     state.history = (history || []).sort((a, b) => new Date(b.lastUsedAt) - new Date(a.lastUsedAt));
