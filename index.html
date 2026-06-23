@@ -109,14 +109,15 @@
   .tile.travel   { background: color-mix(in srgb, var(--purple) 14%, transparent); color: var(--purple); }
 
   /* Lists / sections */
-  .group-list { padding: 12px; display: flex; flex-direction: column; gap: 16px; }
+  .group-list { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
   .section-card { background: var(--bg-elev); border-radius: var(--radius); overflow: hidden; }
-  .section-title { padding: 4px 16px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-2); display: flex; align-items: center; gap: 6px; }
+  .section-title { padding: 6px 16px 4px; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text); display: flex; align-items: center; gap: 6px; }
   .row {
     display: flex; align-items: center; gap: 12px;
-    padding: 12px 16px; min-height: 44px;
+    padding: 4px 16px; min-height: 36px;
     border-top: 1px solid var(--bg-soft);
   }
+  .shop-name { font-size: 20px; font-weight: 500; }
   .row:first-child { border-top: 0; }
   .row .grow { flex: 1; min-width: 0; }
   .row.tap { cursor: pointer; }
@@ -139,7 +140,7 @@
   .item-row .check.on { background: var(--green); border-color: var(--green); color: #fff; }
   .item-row .thumb { width: 36px; height: 36px; border-radius: 6px; background: var(--bg-tert); flex: 0 0 36px; background-size: cover; background-position: center; cursor: zoom-in; }
   .item-row { cursor: pointer; }
-  .item-row .name { flex: 1; min-width: 0; }
+  .item-row .name { flex: 1; min-width: 0; font-size: 20px; font-weight: 500; }
   .icon-mini {
     width: 30px; height: 30px; border-radius: 50%;
     background: var(--bg-tert); color: var(--text-2);
@@ -175,6 +176,7 @@
   }
   .hist-cell.available { background: var(--tint-soft); color: var(--tint); }
   .hist-cell.added { background: var(--bg-tert); color: var(--text-2); cursor: default; }
+  .hist-cell.editable { background: var(--bg-tert); color: var(--text); }
   .hist-cell .h-name { font-weight: 500; font-size: 14px; }
   .hist-cell .h-qty { font-size: 11px; color: var(--text-2); }
   .found-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px; }
@@ -847,6 +849,38 @@ function upsertHistory(item) {
   if (i >= 0) state.history[i] = entry; else state.history.push(entry);
   state.history.sort((a, b) => new Date(b.lastUsedAt) - new Date(a.lastUsedAt));
 }
+async function updatePreviousItem(originalId, updated) {
+  const trimmed = (updated.name || '').trim();
+  if (!trimmed) return;
+  const newId = trimmed.toLowerCase();
+  if (newId !== originalId) {
+    state.history = state.history.filter(h => h.name.toLowerCase() !== newId);
+  }
+  const idx = state.history.findIndex(h => h.name.toLowerCase() === originalId);
+  if (idx < 0) return;
+  state.history[idx] = {
+    ...state.history[idx],
+    name: trimmed,
+    quantity: updated.quantity,
+    category: updated.category || null,
+    photo: updated.photo || null
+  };
+  let shopsChanged = false;
+  for (const sh of state.shops) {
+    for (const it of sh.items) {
+      if (it.name.toLowerCase() === originalId) {
+        it.name = trimmed;
+        it.quantity = updated.quantity;
+        it.category = updated.category || null;
+        it.photo = updated.photo || null;
+        shopsChanged = true;
+      }
+    }
+  }
+  await saveHistory();
+  if (shopsChanged) await saveShops();
+  render();
+}
 async function addFromPrevious(shopId, prev) {
   await addItem(shopId, {
     id: cryptoUUID(), name: prev.name, quantity: prev.quantity,
@@ -1370,11 +1404,14 @@ function shoppingHomeScreen() {
       const row = el('div', 'row tap');
       row.onclick = () => navTo({ v: 'shop', id: shop.id });
       const activeCount = shop.items.filter(i => !i.isChecked).length;
+      const name = el('div', 'shop-name', shop.name);
+      const spacer = el('div'); spacer.style.flex = '1';
+      const countTxt = el('div', 'muted', `${activeCount} item${activeCount === 1 ? '' : 's'}`);
+      const grow = el('div', 'grow');
+      grow.style.display = 'flex'; grow.style.alignItems = 'baseline'; grow.style.gap = '10px';
+      grow.append(name, spacer, countTxt);
       row.append(
-        el('div', 'grow',
-          el('div', '', shop.name),
-          el('div', 'muted', `${activeCount} item${activeCount === 1 ? '' : 's'}`)
-        ),
+        grow,
         button('danger', '✕', (e) => { e.stopPropagation(); if (confirm(`Delete "${shop.name}"?`)) deleteShop(shop.id); }),
         el('div', 'chev', '›')
       );
@@ -1413,7 +1450,7 @@ function shopDetailScreen(shopId) {
   const shop = shopById(shopId);
   wrap.appendChild(navWith(shop ? shop.name : 'Shop', {
     back: navBack,
-    right: el('div', '', button('icon', '🕓', () => openHistoryModal(shopId)),
+    right: el('div', '', button('icon', '✎', () => openHistoryModal(shopId)),
       button('icon', '🗑', () => { if (shop && shop.items.some(i => i.isChecked) && confirm('Clear all checked items?')) clearChecked(shopId); }))
   }));
 
@@ -1581,7 +1618,7 @@ function shopItemRow(shop, item) {
   return row;
 }
 
-function openItemEditor({ mode, shopId, seed }) {
+function openItemEditor({ mode, shopId, seed, historyId }) {
   return new Promise((resolve) => {
     let name = seed.name, amount = seed.quantity.amount, unit = seed.quantity.unit;
     let category = seed.category, photo = seed.photo;
@@ -1589,8 +1626,9 @@ function openItemEditor({ mode, shopId, seed }) {
     const m = el('div', 'modal');
     const close = (r) => { backdrop.remove(); closeModal(); resolve(!!r); };
 
+    const title = mode === 'new' ? 'New Item' : 'Edit Item';
     const nav = el('div', 'nav');
-    nav.append(button('', 'Cancel', () => close(false)), el('div', 'nav-title', mode === 'new' ? 'New Item' : 'Edit Item'),
+    nav.append(button('', 'Cancel', () => close(false)), el('div', 'nav-title', title),
       button('', 'Save', save));
     m.appendChild(nav);
 
@@ -1648,9 +1686,13 @@ function openItemEditor({ mode, shopId, seed }) {
 
     async function save() {
       if (!name.trim() || !(amount > 0)) return;
-      const item = { id: seed.id, name: name.trim(), quantity: { amount, unit }, category, photo, isChecked: seed.isChecked || false };
-      if (mode === 'new') await addItem(shopId, item);
-      else await updateItem(shopId, item);
+      if (mode === 'history') {
+        await updatePreviousItem(historyId, { name: name.trim(), quantity: { amount, unit }, category, photo });
+      } else {
+        const item = { id: seed.id, name: name.trim(), quantity: { amount, unit }, category, photo, isChecked: seed.isChecked || false };
+        if (mode === 'new') await addItem(shopId, item);
+        else await updateItem(shopId, item);
+      }
       close(true);
     }
   });
@@ -1672,14 +1714,12 @@ function openHistoryModal(shopId) {
   const close = () => { backdrop.remove(); closeModal(); };
 
   const nav = el('div', 'nav');
-  nav.append(el('div', 'ghost'), el('div', 'nav-title', 'Previous Items'), button('', 'Done', close));
+  nav.append(el('div', 'ghost'), el('div', 'nav-title', 'Edit Items'), button('', 'Done', close));
   m.appendChild(nav);
   const filterRow = el('div', 'hist-filter-row');
   const grid = el('div', 'hist-grid');
 
   function rebuild() {
-    const shop = shopById(shopId);
-    const addedNames = new Set((shop?.items || []).map(i => i.name.toLowerCase()));
     const usedCats = new Set(state.history.map(h => h.category).filter(Boolean));
     const hasUncat = state.history.some(h => !h.category);
 
@@ -1706,10 +1746,17 @@ function openHistoryModal(shopId) {
       return;
     }
     items.forEach(h => {
-      const added = addedNames.has(h.name.toLowerCase());
-      const cell = el('div', 'hist-cell ' + (added ? 'added' : 'available'));
+      const cell = el('div', 'hist-cell editable');
       cell.append(el('div', 'h-name', h.name), el('div', 'h-qty', quantityDisplay(h.quantity)));
-      if (!added) cell.onclick = async () => { await addFromPrevious(shopId, h); rebuild(); };
+      cell.onclick = async () => {
+        const historyId = h.name.toLowerCase();
+        await openItemEditor({
+          mode: 'history',
+          historyId,
+          seed: { id: historyId, name: h.name, quantity: h.quantity, category: h.category, photo: h.photo, isChecked: false }
+        });
+        rebuild();
+      };
       grid.appendChild(cell);
     });
   }
