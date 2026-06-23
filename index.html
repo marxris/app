@@ -111,7 +111,18 @@
   /* Lists / sections */
   .group-list { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
   .section-card { background: var(--bg-elev); border-radius: var(--radius); overflow: hidden; }
-  .section-title { padding: 6px 16px 4px; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text); display: flex; align-items: center; gap: 6px; }
+  .section-title {
+    margin: 0 12px; padding: 6px 12px;
+    font-size: 14px; font-weight: 600; letter-spacing: 0.02em;
+    color: var(--tint);
+    background: color-mix(in srgb, var(--tint) 18%, transparent);
+    border-radius: 8px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-title.found {
+    color: var(--green);
+    background: color-mix(in srgb, var(--green) 18%, transparent);
+  }
   .row {
     display: flex; align-items: center; gap: 12px;
     padding: 4px 16px; min-height: 36px;
@@ -1450,8 +1461,7 @@ function shopDetailScreen(shopId) {
   const shop = shopById(shopId);
   wrap.appendChild(navWith(shop ? shop.name : 'Shop', {
     back: navBack,
-    right: el('div', '', button('icon', '✎', () => openHistoryModal(shopId)),
-      button('icon', '🗑', () => { if (shop && shop.items.some(i => i.isChecked) && confirm('Clear all checked items?')) clearChecked(shopId); }))
+    right: button('icon', '✎', () => openHistoryModal(shopId))
   }));
 
   const scroll = el('div', 'scroll');
@@ -1551,7 +1561,7 @@ function shopItemsList(shop) {
 
 function buildFoundSection(shop, checked) {
   const wrap = el('div');
-  wrap.appendChild(el('div', 'section-title', '✅ Keuzelijst'));
+  wrap.appendChild(el('div', 'section-title found', '✅ Keuzelijst'));
   const usedCats = new Set(checked.map(i => i.category).filter(Boolean));
   const hasUncat = checked.some(i => !i.category);
   const filter = state.shopFoundFilter || 'all';
