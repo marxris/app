@@ -160,7 +160,7 @@
   }
   .icon-mini:hover { background: color-mix(in srgb, var(--tint) 18%, transparent); color: var(--tint); }
   .item-row.checked .name { text-decoration: line-through; color: var(--text-2); }
-  .item-row .qty { background: var(--bg-tert); color: var(--text-2); border-radius: 999px; padding: 3px 8px; font-size: 12px; font-weight: 500; }
+  .item-row .qty { background: var(--bg-tert); color: var(--text-2); border-radius: 999px; padding: 2px 10px; font-size: 18px; font-weight: 500; flex: 0 0 auto; }
   .addbar {
     position: sticky; bottom: 0;
     background: color-mix(in srgb, var(--bg) 92%, transparent);
@@ -373,6 +373,12 @@
   .photo-pick .preview { width: 60px; height: 60px; border-radius: 8px; background: var(--bg-tert); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--gray); }
   .link { color: var(--tint); font-weight: 500; }
   .danger { color: var(--red); font-weight: 500; }
+  .danger-block {
+    width: 100%; padding: 12px; border-radius: 12px;
+    background: color-mix(in srgb, var(--red) 14%, transparent);
+    color: var(--red); font-weight: 600; font-size: 15px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
   .cat-edit-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--bg-soft); cursor: pointer; }
   .cat-edit-row:first-child { border-top: 0; }
   .helper-tip { font-size: 12px; color: var(--text-2); padding: 8px 16px; }
@@ -1611,8 +1617,8 @@ function shopItemRow(shop, item) {
     thumb.onclick = (e) => { e.stopPropagation(); openPhotoViewer(item.photo); };
     row.appendChild(thumb);
   }
-  row.appendChild(el('div', 'name', item.name));
   row.appendChild(el('span', 'qty', quantityDisplay(item.quantity)));
+  row.appendChild(el('div', 'name', item.name));
 
   const editBtn = button('icon-mini', '✎', (e) => {
     e.stopPropagation();
@@ -1620,11 +1626,6 @@ function shopItemRow(shop, item) {
   });
   editBtn.title = 'Edit item';
   row.appendChild(editBtn);
-
-  row.appendChild(button('danger', '✕', (e) => {
-    e.stopPropagation();
-    if (confirm(`Delete "${item.name}"?`)) deleteItem(shop.id, item.id);
-  }));
   return row;
 }
 
@@ -1688,6 +1689,18 @@ function openItemEditor({ mode, shopId, seed, historyId }) {
     s4.appendChild(pick);
 
     form.append(s1, s2, s3, s4);
+
+    if (mode === 'edit') {
+      const s5 = el('div', 'form-section');
+      const delBtn = button('danger-block', '🗑  Delete Item', () => {
+        if (confirm(`Delete "${seed.name}"?`)) {
+          deleteItem(shopId, seed.id).then(() => close(true));
+        }
+      });
+      s5.appendChild(delBtn);
+      form.appendChild(s5);
+    }
+
     m.appendChild(form);
 
     backdrop.appendChild(m);
